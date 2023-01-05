@@ -7,9 +7,9 @@ import com.mrbysco.chowderexpress.data.server.CartItemTagProvider;
 import com.mrbysco.chowderexpress.data.server.CartRecipes;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CartDatagen {
@@ -19,13 +19,13 @@ public class CartDatagen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeClient(), new CartRecipes(generator));
-			generator.addProvider(event.includeServer(), new CartItemTagProvider(generator, helper));
+			generator.addProvider(new CartRecipes(generator));
+			generator.addProvider(new CartItemTagProvider(generator, helper));
 		}
 		if (event.includeClient()) {
-			generator.addProvider(event.includeClient(), new CartLanguageProvider(generator));
-			generator.addProvider(event.includeClient(), new CartItemModelProvider(generator, helper));
-			generator.addProvider(event.includeClient(), new CartSoundProvider(generator, helper));
+			generator.addProvider(new CartLanguageProvider(generator));
+			generator.addProvider(new CartItemModelProvider(generator, helper));
+			generator.addProvider(new CartSoundProvider(generator, helper));
 		}
 	}
 }

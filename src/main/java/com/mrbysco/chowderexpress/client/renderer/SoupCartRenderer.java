@@ -8,10 +8,10 @@ import com.mrbysco.chowderexpress.client.SoupRenderTypes;
 import com.mrbysco.chowderexpress.client.model.SoupModel;
 import com.mrbysco.chowderexpress.entity.SoupCart;
 import com.mrbysco.chowderexpress.entity.SoupData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.MinecartModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -25,14 +25,12 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 	private static final ResourceLocation MINECART_LOCATION = new ResourceLocation("textures/entity/minecart.png");
 	protected final MinecartModel<T> model;
 	protected final SoupModel<T> soupModel;
-	private final BlockRenderDispatcher blockRenderer;
 
 	public SoupCartRenderer(EntityRendererProvider.Context context) {
 		super(context);
 		this.shadowRadius = 0.7F;
 		this.model = new MinecartModel<>(context.bakeLayer(ModelLayers.MINECART));
 		this.soupModel = new SoupModel<>(context.bakeLayer(ClientHandler.SOUP));
-		this.blockRenderer = context.getBlockRenderDispatcher();
 	}
 
 	public void render(T cart, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn) {
@@ -126,6 +124,6 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 	}
 
 	protected void renderMinecartContents(T cart, float partialTicks, BlockState stateIn, PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn) {
-		blockRenderer.renderSingleBlock(stateIn, poseStack, bufferSource, packedLightIn, OverlayTexture.NO_OVERLAY);
+		Minecraft.getInstance().getBlockRenderer().renderSingleBlock(stateIn, poseStack, bufferSource, packedLightIn, OverlayTexture.NO_OVERLAY);
 	}
 }

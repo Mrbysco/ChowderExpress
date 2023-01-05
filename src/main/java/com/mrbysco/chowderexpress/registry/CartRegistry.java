@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class CartRegistry {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ChowderExpress.MOD_ID);
 	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ChowderExpress.MOD_ID);
-	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ChowderExpress.MOD_ID);
+	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, ChowderExpress.MOD_ID);
 
 	public static final RegistryObject<SoundEvent> MM_SOUP = SOUND_EVENTS.register("mm_soup", () ->
 			new SoundEvent(new ResourceLocation(ChowderExpress.MOD_ID, "mm_soup")));

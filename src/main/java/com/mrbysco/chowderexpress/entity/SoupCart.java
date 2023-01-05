@@ -7,7 +7,7 @@ import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SuspiciousStewItem;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
@@ -39,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class SoupCart extends AbstractMinecart {
-	private static final EntityDataAccessor<Optional<SoupData>> SOUP_DATA = SynchedEntityData.defineId(SoupCart.class, CartDataSerializers.SOUP_DATA.get());
+	private static final EntityDataAccessor<Optional<SoupData>> SOUP_DATA = (EntityDataAccessor<Optional<SoupData>>) SynchedEntityData.defineId(SoupCart.class, CartDataSerializers.SOUP_DATA.get().getSerializer());
 	private static final EntityDataAccessor<Float> SOUP_AMOUNT = SynchedEntityData.defineId(SoupCart.class, EntityDataSerializers.FLOAT);
 	private final Map<MobEffect, MobEffectInstance> effects = Maps.newHashMap();
 
@@ -129,7 +131,7 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	public void maybePlaySound(Player player) {
-		player.displayClientMessage(Component.literal("Mm soup"), true);
+		player.displayClientMessage(new TextComponent("Mm soup"), true);
 		level.playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 	}
 
@@ -288,9 +290,26 @@ public class SoupCart extends AbstractMinecart {
 		}
 	}
 
-	@Override
 	protected Item getDropItem() {
 		return CartRegistry.SOUP_CART_ITEM.get();
+	}
+
+	@Override
+	public ItemStack getCartItem() {
+		return new ItemStack(getDropItem());
+	}
+
+	@Override
+	public void destroy(DamageSource p_38115_) {
+		this.remove(Entity.RemovalReason.KILLED);
+		if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+			ItemStack itemstack = new ItemStack(getDropItem());
+			if (this.hasCustomName()) {
+				itemstack.setHoverName(this.getCustomName());
+			}
+
+			this.spawnAtLocation(itemstack);
+		}
 	}
 
 	@Override
