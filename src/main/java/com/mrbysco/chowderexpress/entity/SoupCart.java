@@ -89,7 +89,7 @@ public class SoupCart extends AbstractMinecart {
 					if (setSoupAmount(1)) {
 						this.maybePlaySound(player);
 
-						setSoupData(new SoupData(stack, stack.getFoodProperties(null)));
+						setSoupData(new SoupData(stack.copy(), stack.getFoodProperties(null)));
 						if (!effects.isEmpty()) {
 							effects.putAll(mobEffects);
 						}
@@ -112,10 +112,10 @@ public class SoupCart extends AbstractMinecart {
 				}
 			}
 		}
-		if (stack.is(Items.BOWL) && getSoupData().isPresent() && getSoupAmount() > 1.0) {
+		if (stack.is(Items.BOWL) && getSoupData().isPresent() && getSoupAmount() >= 1.0) {
+			ItemStack soupStack = getSoupData().get().getStack().copy();
 			if (setSoupAmount(getSoupAmount() - 1.0F)) {
 				stack.shrink(1);
-				ItemStack soupStack = getSoupData().get().getStack();
 				if (soupStack.is(Items.SUSPICIOUS_STEW)) {
 					for (Map.Entry<MobEffect, MobEffectInstance> entry : effects.entrySet()) {
 						SuspiciousStewItem.saveMobEffect(soupStack, entry.getKey(), entry.getValue().getDuration());
