@@ -28,7 +28,7 @@ public class SoupModel<T extends SoupCart> extends HierarchicalModel<T> {
 
 	public void setupAnim(T soupCart, float p_103101_, float p_103102_, float p_103103_, float p_103104_, float p_103105_) {
 		final float soupAmount = soupCart.getSoupAmount();
-		root.y = -20;
+		root.y = -20.05F;
 		if (soupAmount > 0) {
 			root.y -= soupAmount;
 		}
