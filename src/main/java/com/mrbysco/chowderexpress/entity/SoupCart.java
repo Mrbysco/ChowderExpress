@@ -129,8 +129,10 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	public void maybePlaySound(Player player) {
-		player.displayClientMessage(Component.literal("Mm soup"), true);
-		level.playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+		if(random.nextDouble() <= 0.05) {
+			player.displayClientMessage(Component.literal("Mm soup"), true);
+			level.playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+		}
 	}
 
 	private Map<MobEffect, MobEffectInstance> getStewEffects(ItemStack stack) {
