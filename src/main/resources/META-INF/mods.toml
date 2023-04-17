@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[41,)"
+loaderVersion="[44,)"
 issueTrackerURL="https://github.com/Mrbysco/ChowderExpress/issues"
 license="MIT"
 
@@ -15,6 +15,6 @@ Chowder Express is a mod that allows players to fill minecarts with soup and rid
 [[dependencies.chowderexpress]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19,1.20)"
+versionRange="[1.19.3,1.20)"
 ordering="NONE"
 side="BOTH"

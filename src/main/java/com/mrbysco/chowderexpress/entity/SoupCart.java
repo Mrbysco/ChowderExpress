@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -92,8 +93,10 @@ public class SoupCart extends AbstractMinecart {
 							effects.putAll(mobEffects);
 						}
 
-						stack.shrink(1);
-						player.addItem(new ItemStack(Items.BOWL));
+						if (!player.getAbilities().instabuild) {
+							stack.shrink(1);
+							player.addItem(new ItemStack(Items.BOWL));
+						}
 						level.playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 						return InteractionResult.SUCCESS;
 					}
@@ -101,8 +104,10 @@ public class SoupCart extends AbstractMinecart {
 					if (mobEffects.keySet().equals(effects.keySet())) {
 						if (setSoupAmount(getSoupAmount() + 1)) {
 							this.maybePlaySound(player);
-							stack.shrink(1);
-							player.addItem(new ItemStack(Items.BOWL));
+							if (!player.getAbilities().instabuild) {
+								stack.shrink(1);
+								player.addItem(new ItemStack(Items.BOWL));
+							}
 							level.playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 							return InteractionResult.SUCCESS;
 						}
@@ -129,7 +134,7 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	public void maybePlaySound(Player player) {
-		if(random.nextDouble() <= 0.05) {
+		if (random.nextDouble() <= 0.05) {
 			player.displayClientMessage(Component.literal("Mm soup"), true);
 			level.playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
@@ -306,7 +311,7 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -1,20 +1,26 @@
 package com.mrbysco.chowderexpress.data.server;
 
 import com.mrbysco.chowderexpress.ChowderExpress;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import java.util.concurrent.CompletableFuture;
+
 public class CartItemTagProvider extends ItemTagsProvider {
-	public CartItemTagProvider(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper) {
-		super(dataGenerator, new BlockTagsProvider(dataGenerator), ChowderExpress.MOD_ID, existingFileHelper);
+
+	public CartItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
+							   TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
+		super(output, lookupProvider, blockTagProvider, ChowderExpress.MOD_ID, existingFileHelper);
 	}
 
 	@Override
-	protected void addTags() {
+	protected void addTags(HolderLookup.Provider lookupProvider) {
 		this.tag(ChowderExpress.SOUPS).add(Items.BEETROOT_SOUP, Items.MUSHROOM_STEW, Items.RABBIT_STEW, Items.SUSPICIOUS_STEW);
 
 		//Enhanced Farming

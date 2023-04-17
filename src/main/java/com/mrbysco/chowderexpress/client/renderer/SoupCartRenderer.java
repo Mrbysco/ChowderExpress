@@ -2,7 +2,7 @@ package com.mrbysco.chowderexpress.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.mrbysco.chowderexpress.client.ClientHandler;
 import com.mrbysco.chowderexpress.client.SoupRenderTypes;
 import com.mrbysco.chowderexpress.client.model.SoupModel;
@@ -71,8 +71,8 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		}
 
 		poseStack.translate(0.0D, 0.375D, 0.0D);
-		poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
-		poseStack.mulPose(Vector3f.ZP.rotationDegrees(-f3));
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entityYaw));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(-f3));
 		float f5 = (float) cart.getHurtTime() - partialTicks;
 		float f6 = cart.getDamage() - partialTicks;
 		if (f6 < 0.0F) {
@@ -80,7 +80,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		}
 
 		if (f5 > 0.0F) {
-			poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.sin(f5) * f5 * f6 / 10.0F * (float) cart.getHurtDir()));
+			poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(f5) * f5 * f6 / 10.0F * (float) cart.getHurtDir()));
 		}
 
 		int j = cart.getDisplayOffset();
@@ -90,7 +90,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 			float f4 = 0.75F;
 			poseStack.scale(f4, f4, f4);
 			poseStack.translate(-0.5D, (double) ((float) (j - 8) / 16.0F), 0.5D);
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
 			this.renderMinecartContents(cart, partialTicks, blockstate, poseStack, bufferSource, packedLightIn);
 			poseStack.popPose();
 		}
