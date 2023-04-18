@@ -28,8 +28,9 @@ public class CartDatagen {
 
 		if (event.includeServer()) {
 			generator.addProvider(event.includeClient(), new CartRecipes(packOutput));
-			BlockTagsProvider blockTagsProvider = new CartBlockTagProvider(packOutput, lookupProvider, helper);
-			generator.addProvider(event.includeServer(), new CartItemTagProvider(packOutput, lookupProvider, blockTagsProvider, helper));
+			BlockTagsProvider blockTagsProvider;
+			generator.addProvider(event.includeServer(), blockTagsProvider = new CartBlockTagProvider(packOutput, lookupProvider, helper));
+			generator.addProvider(event.includeServer(), new CartItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), helper));
 		}
 		if (event.includeClient()) {
 			generator.addProvider(event.includeClient(), new CartLanguageProvider(packOutput));

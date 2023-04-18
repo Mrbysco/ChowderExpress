@@ -47,7 +47,6 @@ public class SoupRenderTypes extends RenderType {
 
 		public SoupTextureStateShard(ResourceLocation resourceLocation, boolean blur, boolean mipmap) {
 			super(() -> {
-				RenderSystem.enableTexture();
 				TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
 				texturemanager.getTexture(resourceLocation);
 				AbstractTexture texture = texturemanager.getTexture(resourceLocation, null);
