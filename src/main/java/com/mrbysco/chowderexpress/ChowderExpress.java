@@ -7,12 +7,11 @@ import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -41,11 +40,9 @@ public class ChowderExpress {
 		});
 	}
 
-	private void buildCreativeContents(CreativeModeTabEvent.BuildContents event) {
-		var entries = event.getEntries();
-		var visibility = CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
-		if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-			entries.put(new ItemStack(CartRegistry.SOUP_CART_ITEM.get()), visibility);
+	private void buildCreativeContents(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+			event.accept(new ItemStack(CartRegistry.SOUP_CART_ITEM.get()));
 		}
 	}
 }

@@ -30,5 +30,6 @@
     "recipes": [
       "chowderexpress:soup_cart"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

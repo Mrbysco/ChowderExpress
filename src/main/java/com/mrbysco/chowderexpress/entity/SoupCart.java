@@ -64,7 +64,7 @@ public class SoupCart extends AbstractMinecart {
 			return InteractionResult.PASS;
 		} else if (this.isVehicle()) {
 			return InteractionResult.PASS;
-		} else if (!this.level.isClientSide) {
+		} else if (!this.level().isClientSide) {
 			ItemStack stack = player.getItemInHand(hand);
 			if (stack.is(ChowderExpress.SOUPS) || stack.is(Items.BOWL)) {
 				return doSoupInteraction(player, hand, stack);
@@ -97,7 +97,7 @@ public class SoupCart extends AbstractMinecart {
 							stack.shrink(1);
 							player.addItem(new ItemStack(Items.BOWL));
 						}
-						level.playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+						this.level().playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 						return InteractionResult.SUCCESS;
 					}
 				} else if (getSoupData().get().getLocation().equals(soupLocation)) {
@@ -108,7 +108,7 @@ public class SoupCart extends AbstractMinecart {
 								stack.shrink(1);
 								player.addItem(new ItemStack(Items.BOWL));
 							}
-							level.playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+							this.level().playSound(null, blockPosition(), CartRegistry.EMPTY_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 							return InteractionResult.SUCCESS;
 						}
 					}
@@ -126,7 +126,7 @@ public class SoupCart extends AbstractMinecart {
 				}
 
 				player.addItem(soupStack);
-				level.playSound(null, blockPosition(), CartRegistry.FILL_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+				this.level().playSound(null, blockPosition(), CartRegistry.FILL_BOWL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 			}
 		}
 
@@ -136,7 +136,7 @@ public class SoupCart extends AbstractMinecart {
 	public void maybePlaySound(Player player) {
 		if (random.nextDouble() <= 0.05) {
 			player.displayClientMessage(Component.literal("Mm soup"), true);
-			level.playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+			this.level().playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
 	}
 
@@ -264,7 +264,7 @@ public class SoupCart extends AbstractMinecart {
 	@Override
 	protected void moveAlongTrack(BlockPos pos, BlockState state) {
 		super.moveAlongTrack(pos, state);
-		if (level.getGameTime() % 20 == 0) {
+		if (this.level().getGameTime() % 20 == 0) {
 			Entity entity = this.getFirstPassenger();
 			if (entity instanceof Player player && hasPassenger(player) && random.nextBoolean() && getSoupData().isPresent()) {
 				SoupData soupData = getSoupData().get();
@@ -273,11 +273,11 @@ public class SoupCart extends AbstractMinecart {
 						player.addEffect(entry.getValue());
 					}
 					this.setSoupAmount(getSoupAmount() - 0.5F);
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
 				} else if (player.getFoodData().needsFood() && getSoupAmount() > 0.25F) {
 					player.getFoodData().eat(Math.min(1, (int) (soupData.getNutrition() / 2.0F)), soupData.getSaturationModifier() / 2.0F);
 					this.setSoupAmount(getSoupAmount() - 0.25F);
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
 				}
 			}
 		}
