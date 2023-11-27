@@ -3,8 +3,8 @@ package com.mrbysco.chowderexpress.item;
 import com.mrbysco.chowderexpress.entity.SoupCart;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.tags.BlockTags;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.phys.Vec3;
 
 public class SoupCartItem extends Item {
 
@@ -26,13 +27,14 @@ public class SoupCartItem extends Item {
 		/**
 		 * Dispense the specified stack, play the dispense sound and spawn particles.
 		 */
-		public ItemStack execute(BlockSource source, ItemStack stack) {
-			Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-			Level level = source.getLevel();
-			double d0 = source.x() + (double) direction.getStepX() * 1.125D;
-			double d1 = Math.floor(source.y()) + (double) direction.getStepY();
-			double d2 = source.z() + (double) direction.getStepZ() * 1.125D;
-			BlockPos blockpos = source.getPos().relative(direction);
+		protected ItemStack execute(BlockSource source, ItemStack stack) {
+			Direction direction = source.state().getValue(DispenserBlock.FACING);
+			Level level = source.level();
+			Vec3 center = source.center();
+			double d0 = center.x() + (double) direction.getStepX() * 1.125;
+			double d1 = Math.floor(center.y()) + (double) direction.getStepY();
+			double d2 = center.z() + (double) direction.getStepZ() * 1.125;
+			BlockPos blockpos = source.pos().relative(direction);
 			BlockState blockstate = level.getBlockState(blockpos);
 			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
 			double d3;
@@ -70,7 +72,7 @@ public class SoupCartItem extends Item {
 		 * Play the dispense sound from the specified block.
 		 */
 		protected void playSound(BlockSource source) {
-			source.getLevel().levelEvent(1000, source.getPos(), 0);
+			source.level().levelEvent(1000, source.pos(), 0);
 		}
 	};
 

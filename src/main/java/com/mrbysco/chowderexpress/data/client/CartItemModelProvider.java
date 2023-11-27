@@ -2,11 +2,10 @@ package com.mrbysco.chowderexpress.data.client;
 
 import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class CartItemModelProvider extends ItemModelProvider {
 	public CartItemModelProvider(PackOutput packOutput, ExistingFileHelper helper) {

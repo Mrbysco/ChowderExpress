@@ -9,11 +9,11 @@ import com.mrbysco.chowderexpress.data.server.CartRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -27,7 +27,7 @@ public class CartDatagen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeClient(), new CartRecipes(packOutput));
+			generator.addProvider(event.includeClient(), new CartRecipes(packOutput, lookupProvider));
 			BlockTagsProvider blockTagsProvider;
 			generator.addProvider(event.includeServer(), blockTagsProvider = new CartBlockTagProvider(packOutput, lookupProvider, helper));
 			generator.addProvider(event.includeServer(), new CartItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), helper));

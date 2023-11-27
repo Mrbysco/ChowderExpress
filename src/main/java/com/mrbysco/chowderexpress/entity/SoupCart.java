@@ -1,12 +1,12 @@
 package com.mrbysco.chowderexpress.entity;
 
-import com.google.common.collect.Maps;
 import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartDataSerializers;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -18,8 +18,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -29,20 +27,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PlayMessages;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.PlayMessages;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class SoupCart extends AbstractMinecart {
 	private static final EntityDataAccessor<Optional<SoupData>> SOUP_DATA = SynchedEntityData.defineId(SoupCart.class, CartDataSerializers.SOUP_DATA.get());
 	private static final EntityDataAccessor<Float> SOUP_AMOUNT = SynchedEntityData.defineId(SoupCart.class, EntityDataSerializers.FLOAT);
-	private final Map<MobEffect, MobEffectInstance> effects = Maps.newHashMap();
+	private final List<SuspiciousEffectHolder.EffectEntry> effects = new ArrayList<>();
 
 
 	public SoupCart(EntityType<?> type, Level level) {
@@ -81,16 +80,16 @@ public class SoupCart extends AbstractMinecart {
 			return InteractionResult.FAIL;
 		}
 		if (stack.is(ChowderExpress.SOUPS)) {
-			ResourceLocation soupLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
+			ResourceLocation soupLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			if (soupLocation != null) {
-				Map<MobEffect, MobEffectInstance> mobEffects = getStewEffects(stack);
+				List<SuspiciousEffectHolder.EffectEntry> mobEffects = getStewEffects(stack);
 				if (getSoupData().isEmpty()) {
 					if (setSoupAmount(1)) {
 						this.maybePlaySound(player);
 
-						setSoupData(new SoupData(stack.copy(), stack.getFoodProperties(null)));
-						if (!effects.isEmpty()) {
-							effects.putAll(mobEffects);
+						setSoupData(new SoupData(stack.copy(), stack.getFoodProperties(player)));
+						if (!mobEffects.isEmpty()) {
+							effects.addAll(mobEffects);
 						}
 
 						if (!player.getAbilities().instabuild) {
@@ -101,7 +100,7 @@ public class SoupCart extends AbstractMinecart {
 						return InteractionResult.SUCCESS;
 					}
 				} else if (getSoupData().get().getLocation().equals(soupLocation)) {
-					if (mobEffects.keySet().equals(effects.keySet())) {
+					if (mobEffects.size() == this.effects.size()) {
 						if (setSoupAmount(getSoupAmount() + 1)) {
 							this.maybePlaySound(player);
 							if (!player.getAbilities().instabuild) {
@@ -120,9 +119,7 @@ public class SoupCart extends AbstractMinecart {
 			if (setSoupAmount(getSoupAmount() - 1.0F)) {
 				stack.shrink(1);
 				if (soupStack.is(Items.SUSPICIOUS_STEW)) {
-					for (Map.Entry<MobEffect, MobEffectInstance> entry : effects.entrySet()) {
-						SuspiciousStewItem.saveMobEffect(soupStack, entry.getKey(), entry.getValue().getDuration());
-					}
+					SuspiciousStewItem.saveMobEffects(soupStack, this.effects);
 				}
 
 				player.addItem(soupStack);
@@ -140,29 +137,22 @@ public class SoupCart extends AbstractMinecart {
 		}
 	}
 
-	private Map<MobEffect, MobEffectInstance> getStewEffects(ItemStack stack) {
-		Map<MobEffect, MobEffectInstance> mobEffects = new HashMap<>();
+	private List<SuspiciousEffectHolder.EffectEntry> getStewEffects(ItemStack stack) {
+		List<SuspiciousEffectHolder.EffectEntry> mobEffects = new ArrayList<>();
 		if (stack.getItem() instanceof SuspiciousStewItem) {
-			CompoundTag compoundtag = stack.getTag();
-			if (compoundtag != null && compoundtag.contains("Effects", 9)) {
-				ListTag listtag = compoundtag.getList("Effects", 10);
-
-				for (int i = 0; i < listtag.size(); ++i) {
-					int j = 160;
-					CompoundTag listtagCompound = listtag.getCompound(i);
-					if (listtagCompound.contains("EffectDuration", 3)) {
-						j = listtagCompound.getInt("EffectDuration");
-					}
-
-					MobEffect mobeffect = MobEffect.byId(listtagCompound.getInt("EffectId"));
-					mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(listtagCompound, "forge:effect_id", mobeffect);
-					if (mobeffect != null) {
-						mobEffects.put(mobeffect, new MobEffectInstance(mobeffect, j));
-					}
-				}
-			}
+			CompoundTag tag = stack.getTag();
+			listPotionEffects(tag, instance -> mobEffects.add(instance));
 		}
 		return mobEffects;
+	}
+
+	private void listPotionEffects(CompoundTag tag, Consumer<SuspiciousEffectHolder.EffectEntry> consumer) {
+		if (tag != null && tag.contains("effects", 9)) {
+			SuspiciousEffectHolder.EffectEntry.LIST_CODEC
+					.parse(NbtOps.INSTANCE, tag.getList("effects", 10))
+					.result()
+					.ifPresent(entries -> entries.forEach(consumer));
+		}
 	}
 
 	@Override
@@ -215,17 +205,10 @@ public class SoupCart extends AbstractMinecart {
 			this.setSoupAmount(tag.getFloat("SoupAmount"));
 		}
 
-		if (tag.contains("ActiveEffects", 9)) {
-			ListTag listtag = tag.getList("ActiveEffects", 10);
-
-			for (int i = 0; i < listtag.size(); ++i) {
-				CompoundTag compoundtag = listtag.getCompound(i);
-				MobEffectInstance mobeffectinstance = MobEffectInstance.load(compoundtag);
-				if (mobeffectinstance != null) {
-					this.addEffect(mobeffectinstance);
-				}
-			}
-		}
+		SuspiciousEffectHolder.EffectEntry.LIST_CODEC
+				.parse(NbtOps.INSTANCE, tag.getList("ActiveEffects", 10))
+				.result()
+				.ifPresent(effects -> this.effects.addAll(effects));
 	}
 
 	@Override
@@ -236,13 +219,10 @@ public class SoupCart extends AbstractMinecart {
 		}
 		tag.putFloat("SoupAmount", this.getSoupAmount());
 		if (!this.effects.isEmpty()) {
-			ListTag listtag = new ListTag();
-
-			for (MobEffectInstance mobeffectinstance : this.effects.values()) {
-				listtag.add(mobeffectinstance.save(new CompoundTag()));
-			}
-
-			tag.put("ActiveEffects", listtag);
+			SuspiciousEffectHolder.EffectEntry.LIST_CODEC
+					.encodeStart(NbtOps.INSTANCE, this.effects)
+					.result()
+					.ifPresent(effects -> tag.put("ActiveEffects", effects));
 		}
 	}
 
@@ -269,8 +249,8 @@ public class SoupCart extends AbstractMinecart {
 			if (entity instanceof Player player && hasPassenger(player) && random.nextBoolean() && getSoupData().isPresent()) {
 				SoupData soupData = getSoupData().get();
 				if (!effects.isEmpty() && getSoupAmount() > 0.5F) {
-					for (Map.Entry<MobEffect, MobEffectInstance> entry : effects.entrySet()) {
-						player.addEffect(entry.getValue());
+					for (SuspiciousEffectHolder.EffectEntry entry : effects) {
+						player.addEffect(entry.createEffectInstance());
 					}
 					this.setSoupAmount(getSoupAmount() - 0.5F);
 					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
@@ -283,13 +263,9 @@ public class SoupCart extends AbstractMinecart {
 		}
 	}
 
-	public boolean addEffect(MobEffectInstance effect) {
-		MobEffectInstance mobeffectinstance = this.effects.get(effect.getEffect());
-		if (mobeffectinstance == null) {
-			this.effects.put(effect.getEffect(), effect);
-			return true;
-		} else if (mobeffectinstance.update(effect)) {
-			return true;
+	public boolean addEffect(SuspiciousEffectHolder.EffectEntry effect) {
+		if (!this.effects.contains(effect)) {
+			return this.effects.add(effect);
 		} else {
 			return false;
 		}

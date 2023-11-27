@@ -2,11 +2,11 @@ package com.mrbysco.chowderexpress.data.client;
 
 import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+
+import java.util.function.Supplier;
 
 public class CartLanguageProvider extends LanguageProvider {
 	public CartLanguageProvider(PackOutput packOutput) {
@@ -23,7 +23,7 @@ public class CartLanguageProvider extends LanguageProvider {
 		addSubtitle(CartRegistry.FILL_BOWL, "Filling bowl");
 	}
 
-	public void addSubtitle(RegistryObject<SoundEvent> sound, String name) {
+	public void addSubtitle(Supplier<SoundEvent> sound, String name) {
 		this.addSubtitle(sound.get(), name);
 	}
 

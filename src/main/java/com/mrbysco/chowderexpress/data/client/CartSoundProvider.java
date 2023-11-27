@@ -2,11 +2,10 @@ package com.mrbysco.chowderexpress.data.client;
 
 import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 public class CartSoundProvider extends SoundDefinitionsProvider {
 

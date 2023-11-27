@@ -8,7 +8,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class CartItemTagProvider extends ItemTagsProvider {
 
 	public CartItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> providerCompletableFuture,
-							   CompletableFuture<TagsProvider.TagLookup<Block>> completableFuture, @Nullable net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
+							   CompletableFuture<TagsProvider.TagLookup<Block>> completableFuture, @Nullable ExistingFileHelper fileHelper) {
 		super(packOutput, providerCompletableFuture, completableFuture, ChowderExpress.MOD_ID, fileHelper);
 	}
 
