@@ -12,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.slf4j.Logger;
@@ -23,9 +22,7 @@ public class ChowderExpress {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public static final TagKey<Item> SOUPS = TagKey.create(Registries.ITEM, new ResourceLocation(ChowderExpress.MOD_ID, "soups"));
 
-	public ChowderExpress() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
+	public ChowderExpress(IEventBus eventBus) {
 		CartRegistry.ITEMS.register(eventBus);
 		CartRegistry.SOUND_EVENTS.register(eventBus);
 		CartRegistry.ENTITY_TYPES.register(eventBus);
