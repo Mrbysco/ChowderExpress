@@ -1,11 +1,10 @@
 package com.mrbysco.chowderexpress.entity;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
@@ -15,23 +14,18 @@ public final class SoupData {
 	private final int nutrition;
 	private final float saturationModifier;
 
-	public SoupData(ItemStack stack, int nutrition, float saturationModifier) {
+	public SoupData(ItemStack stack, FoodProperties foodProperties) {
 		this.stack = stack;
-		this.location = BuiltInRegistries.ITEM.getKey(stack.getItem());
-		this.nutrition = nutrition;
-		this.saturationModifier = saturationModifier;
+		this.location = ForgeRegistries.ITEMS.getKey(stack.getItem());
+		this.nutrition = foodProperties.getNutrition();
+		this.saturationModifier = foodProperties.getSaturationModifier();
 	}
 
-	public SoupData(ItemStack stack, @Nullable FoodProperties foodProperties) {
+	public SoupData(ItemStack stack, int nutrition, float saturationModifier) {
 		this.stack = stack;
-		this.location = BuiltInRegistries.ITEM.getKey(stack.getItem());
-		if (foodProperties != null) {
-			this.nutrition = foodProperties.getNutrition();
-			this.saturationModifier = foodProperties.getSaturationModifier();
-		} else {
-			this.nutrition = 0;
-			this.saturationModifier = 0;
-		}
+		this.location = ForgeRegistries.ITEMS.getKey(stack.getItem());
+		this.nutrition = nutrition;
+		this.saturationModifier = saturationModifier;
 	}
 
 	public ItemStack getStack() {
