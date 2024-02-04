@@ -8,8 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,8 +27,6 @@ import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.NetworkHooks;
-import net.neoforged.neoforge.network.PlayMessages;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -50,10 +46,6 @@ public class SoupCart extends AbstractMinecart {
 
 	public SoupCart(EntityType<?> type, Level level, double x, double y, double z) {
 		super(type, level, x, y, z);
-	}
-
-	public SoupCart(PlayMessages.SpawnEntity spawnEntity, Level level) {
-		this(CartRegistry.SOUP_CART.get(), level);
 	}
 
 	public InteractionResult interact(Player player, InteractionHand hand) {
@@ -284,10 +276,5 @@ public class SoupCart extends AbstractMinecart {
 	@Override
 	public Type getMinecartType() {
 		return Type.RIDEABLE;
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -31,6 +31,5 @@ public class CartRegistry {
 
 	public static final Supplier<EntityType<SoupCart>> SOUP_CART = ENTITY_TYPES.register("soup_cart", () ->
 			EntityType.Builder.<SoupCart>of(SoupCart::new, MobCategory.MISC)
-					.sized(0.98F, 0.7F).clientTrackingRange(8)
-					.setCustomClientFactory(SoupCart::new).build("soup_cart"));
+					.sized(0.98F, 0.7F).clientTrackingRange(8).build("soup_cart"));
 }
