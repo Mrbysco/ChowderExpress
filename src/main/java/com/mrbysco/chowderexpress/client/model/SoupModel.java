@@ -26,6 +26,7 @@ public class SoupModel<T extends SoupCart> extends HierarchicalModel<T> {
 		return LayerDefinition.create(meshdefinition, 64, 32);
 	}
 
+	@Override
 	public void setupAnim(T soupCart, float p_103101_, float p_103102_, float p_103103_, float p_103104_, float p_103105_) {
 		final float soupAmount = soupCart.getSoupAmount();
 		root.y = -20.05F;
@@ -34,6 +35,7 @@ public class SoupModel<T extends SoupCart> extends HierarchicalModel<T> {
 		}
 	}
 
+	@Override
 	public ModelPart root() {
 		return this.root;
 	}

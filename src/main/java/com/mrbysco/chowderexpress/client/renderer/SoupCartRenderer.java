@@ -35,6 +35,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		this.blockRenderer = context.getBlockRenderDispatcher();
 	}
 
+	@Override
 	public void render(T cart, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn) {
 		super.render(cart, entityYaw, partialTicks, poseStack, bufferSource, packedLightIn);
 		poseStack.pushPose();
@@ -109,7 +110,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		float soupAmount = cart.getSoupAmount();
 		if (soupAmount > 0 && cart.getSoupData().isPresent()) {
 			final SoupData data = cart.getSoupData().get();
-			ResourceLocation soupKind = data.getLocation();
+			ResourceLocation soupKind = data.location();
 			if (soupKind != null) {
 				ResourceLocation soupLocation = new ResourceLocation(soupKind.getNamespace(), "textures/soup/" + soupKind.getPath() + ".png");
 				this.model.copyPropertiesTo(this.soupModel);
@@ -121,6 +122,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		}
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(T cart) {
 		return MINECART_LOCATION;
 	}

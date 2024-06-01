@@ -10,6 +10,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -19,10 +20,10 @@ import org.slf4j.Logger;
 @Mod(ChowderExpress.MOD_ID)
 public class ChowderExpress {
 	public static final String MOD_ID = "chowderexpress";
-	private static final Logger LOGGER = LogUtils.getLogger();
+	public static final Logger LOGGER = LogUtils.getLogger();
 	public static final TagKey<Item> SOUPS = TagKey.create(Registries.ITEM, new ResourceLocation(ChowderExpress.MOD_ID, "soups"));
 
-	public ChowderExpress(IEventBus eventBus) {
+	public ChowderExpress(IEventBus eventBus, Dist dist) {
 		CartRegistry.ITEMS.register(eventBus);
 		CartRegistry.SOUND_EVENTS.register(eventBus);
 		CartRegistry.ENTITY_TYPES.register(eventBus);
@@ -30,7 +31,7 @@ public class ChowderExpress {
 
 		eventBus.addListener(this::buildCreativeContents);
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
 		}

@@ -4,6 +4,7 @@ import com.mrbysco.chowderexpress.entity.SoupCart;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -27,6 +28,7 @@ public class SoupCartItem extends Item {
 		/**
 		 * Dispense the specified stack, play the dispense sound and spawn particles.
 		 */
+		@Override
 		protected ItemStack execute(BlockSource source, ItemStack stack) {
 			Direction direction = source.state().getValue(DispenserBlock.FACING);
 			Level level = source.level();
@@ -59,7 +61,7 @@ public class SoupCartItem extends Item {
 			}
 
 			SoupCart soupCart = new SoupCart(CartRegistry.SOUP_CART.get(), level, d0, d1 + d3, d2);
-			if (stack.hasCustomHoverName()) {
+			if (stack.has(DataComponents.CUSTOM_NAME)) {
 				soupCart.setCustomName(stack.getHoverName());
 			}
 			level.addFreshEntity(soupCart);
@@ -71,6 +73,7 @@ public class SoupCartItem extends Item {
 		/**
 		 * Play the dispense sound from the specified block.
 		 */
+		@Override
 		protected void playSound(BlockSource source) {
 			source.level().levelEvent(1000, source.pos(), 0);
 		}
@@ -84,6 +87,7 @@ public class SoupCartItem extends Item {
 	/**
 	 * Called when a Block is right-clicked with this Item
 	 */
+	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Level level = context.getLevel();
 		BlockPos pos = context.getClickedPos();
@@ -101,7 +105,7 @@ public class SoupCartItem extends Item {
 
 				SoupCart soupCart = new SoupCart(CartRegistry.SOUP_CART.get(), level,
 						(double) pos.getX() + 0.5D, (double) pos.getY() + 0.0625D + d0, (double) pos.getZ() + 0.5D);
-				if (itemstack.hasCustomHoverName()) {
+				if (itemstack.has(DataComponents.CUSTOM_NAME)) {
 					soupCart.setCustomName(itemstack.getHoverName());
 				}
 
