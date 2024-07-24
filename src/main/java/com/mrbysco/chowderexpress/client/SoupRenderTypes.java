@@ -40,7 +40,7 @@ public class SoupRenderTypes extends RenderType {
 	}
 
 	public static class SoupTextureStateShard extends RenderStateShard.EmptyTextureStateShard {
-		private static final ResourceLocation DEFAULT_SOUP = new ResourceLocation(ChowderExpress.MOD_ID, "textures/soup/default_soup.png");
+		private static final ResourceLocation DEFAULT_SOUP = ChowderExpress.modLoc("textures/soup/default_soup.png");
 		private final Optional<ResourceLocation> texture;
 		protected boolean blur;
 		protected boolean mipmap;

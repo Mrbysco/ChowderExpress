@@ -8,7 +8,7 @@ Chowder Express is a unique and fun mod that adds a new way to transport and use
 
 ## License ##
 * Chowder Express is licensed under the MIT License
-  - (c) 2022 Mrbysco
+  - (c) 2024 Mrbysco
   - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 ## Downloads ##

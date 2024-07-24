@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class CartItemTagProvider extends ItemTagsProvider {
 
 	public CartItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> providerCompletableFuture,
-							   CompletableFuture<TagsProvider.TagLookup<Block>> completableFuture, @Nullable ExistingFileHelper fileHelper) {
+	                           CompletableFuture<TagsProvider.TagLookup<Block>> completableFuture, @Nullable ExistingFileHelper fileHelper) {
 		super(packOutput, providerCompletableFuture, completableFuture, ChowderExpress.MOD_ID, fileHelper);
 	}
 
@@ -25,22 +25,22 @@ public class CartItemTagProvider extends ItemTagsProvider {
 		this.tag(ChowderExpress.SOUPS).add(Items.BEETROOT_SOUP, Items.MUSHROOM_STEW, Items.RABBIT_STEW, Items.SUSPICIOUS_STEW);
 
 		//Enhanced Farming
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "carrot_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "chicken_noodle_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "corn_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "cucumber_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "onion_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "potato_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("enhancedfarming", "tomato_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "carrot_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "chicken_noodle_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "corn_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "cucumber_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "onion_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "potato_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "tomato_soup"));
 
 		//Farmers Delight
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "beef_stew"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "chicken_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "vegetable_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "pumpkin_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "noodle_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "fish_stew"));
-		this.tag(ChowderExpress.SOUPS).addOptional(new ResourceLocation("farmersdelight", "baked_cod_stew"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "beef_stew"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "chicken_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "vegetable_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "pumpkin_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "noodle_soup"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "fish_stew"));
+		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "baked_cod_stew"));
 
 	}
 }

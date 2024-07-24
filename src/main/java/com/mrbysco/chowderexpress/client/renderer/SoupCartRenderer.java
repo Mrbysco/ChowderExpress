@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
-	private static final ResourceLocation MINECART_LOCATION = new ResourceLocation("textures/entity/minecart.png");
+	private static final ResourceLocation MINECART_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/minecart.png");
 	protected final MinecartModel<T> model;
 	protected final SoupModel<T> soupModel;
 	private final BlockRenderDispatcher blockRenderer;
@@ -99,7 +99,7 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 		poseStack.scale(-1.0F, -1.0F, 1.0F);
 		this.model.setupAnim(cart, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		VertexConsumer vertexconsumer = bufferSource.getBuffer(this.model.renderType(this.getTextureLocation(cart)));
-		this.model.renderToBuffer(poseStack, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		this.model.renderToBuffer(poseStack, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
 		this.renderSoup(cart, entityYaw, partialTicks, poseStack, bufferSource, packedLightIn);
 
@@ -112,12 +112,12 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 			final SoupData data = cart.getSoupData().get();
 			ResourceLocation soupKind = data.location();
 			if (soupKind != null) {
-				ResourceLocation soupLocation = new ResourceLocation(soupKind.getNamespace(), "textures/soup/" + soupKind.getPath() + ".png");
+				ResourceLocation soupLocation = ResourceLocation.fromNamespaceAndPath(soupKind.getNamespace(), "textures/soup/" + soupKind.getPath() + ".png");
 				this.model.copyPropertiesTo(this.soupModel);
 				this.soupModel.setupAnim(cart, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 
 				VertexConsumer vertexconsumer = bufferSource.getBuffer(SoupRenderTypes.getSoup(soupLocation));
-				this.soupModel.renderToBuffer(poseStack, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				this.soupModel.renderToBuffer(poseStack, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, -1);
 			}
 		}
 	}

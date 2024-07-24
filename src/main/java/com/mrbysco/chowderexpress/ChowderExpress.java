@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.slf4j.Logger;
 
@@ -21,7 +20,7 @@ import org.slf4j.Logger;
 public class ChowderExpress {
 	public static final String MOD_ID = "chowderexpress";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static final TagKey<Item> SOUPS = TagKey.create(Registries.ITEM, new ResourceLocation(ChowderExpress.MOD_ID, "soups"));
+	public static final TagKey<Item> SOUPS = TagKey.create(Registries.ITEM, modLoc("soups"));
 
 	public ChowderExpress(IEventBus eventBus, Dist dist) {
 		CartRegistry.ITEMS.register(eventBus);
@@ -35,6 +34,10 @@ public class ChowderExpress {
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
 		}
+	}
+
+	public static ResourceLocation modLoc(String path) {
+		return ResourceLocation.fromNamespaceAndPath(ChowderExpress.MOD_ID, path);
 	}
 
 	private void buildCreativeContents(BuildCreativeModeTabContentsEvent event) {
