@@ -6,8 +6,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,16 +22,7 @@ public class CartItemTagProvider extends ItemTagsProvider {
 
 	@Override
 	protected void addTags(HolderLookup.Provider lookupProvider) {
-		this.tag(ChowderExpress.SOUPS).add(Items.BEETROOT_SOUP, Items.MUSHROOM_STEW, Items.RABBIT_STEW, Items.SUSPICIOUS_STEW);
-
-		//Enhanced Farming
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "carrot_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "chicken_noodle_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "corn_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "cucumber_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "onion_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "potato_soup"));
-		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("enhancedfarming", "tomato_soup"));
+		this.tag(ChowderExpress.SOUPS).addTag(Tags.Items.FOODS_SOUP);
 
 		//Farmers Delight
 		this.tag(ChowderExpress.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "beef_stew"));
