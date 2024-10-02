@@ -20,6 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 	private static final ResourceLocation MINECART_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/minecart.png");
@@ -128,6 +129,6 @@ public class SoupCartRenderer<T extends SoupCart> extends EntityRenderer<T> {
 	}
 
 	protected void renderMinecartContents(T cart, float partialTicks, BlockState stateIn, PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn) {
-		blockRenderer.renderSingleBlock(stateIn, poseStack, bufferSource, packedLightIn, OverlayTexture.NO_OVERLAY);
+		blockRenderer.renderSingleBlock(stateIn, poseStack, bufferSource, packedLightIn, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
 	}
 }
