@@ -1,1 +1,1 @@
-* Initial update to 1.21
+* Add the `c:foods/soup` tag to the `chowderexpress:soups` tag to add support for more soups
