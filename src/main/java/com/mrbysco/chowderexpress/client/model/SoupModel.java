@@ -1,7 +1,7 @@
 package com.mrbysco.chowderexpress.client.model;
 
-import com.mrbysco.chowderexpress.entity.SoupCart;
-import net.minecraft.client.model.HierarchicalModel;
+import com.mrbysco.chowderexpress.client.state.SoupCartRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -9,11 +9,10 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public class SoupModel<T extends SoupCart> extends HierarchicalModel<T> {
-	private final ModelPart root;
+public class SoupModel extends EntityModel<SoupCartRenderState> {
 
 	public SoupModel(ModelPart root) {
-		this.root = root;
+		super(root);
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -27,16 +26,12 @@ public class SoupModel<T extends SoupCart> extends HierarchicalModel<T> {
 	}
 
 	@Override
-	public void setupAnim(T soupCart, float p_103101_, float p_103102_, float p_103103_, float p_103104_, float p_103105_) {
-		final float soupAmount = soupCart.getSoupAmount();
+	public void setupAnim(SoupCartRenderState renderState) {
+		super.setupAnim(renderState);
 		root.y = -20.05F;
+		float soupAmount = renderState.soupAmount;
 		if (soupAmount > 0) {
 			root.y -= soupAmount;
 		}
-	}
-
-	@Override
-	public ModelPart root() {
-		return this.root;
 	}
 }

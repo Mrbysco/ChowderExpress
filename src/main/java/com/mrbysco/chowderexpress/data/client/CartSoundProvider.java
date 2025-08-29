@@ -4,13 +4,12 @@ import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 public class CartSoundProvider extends SoundDefinitionsProvider {
 
-	public CartSoundProvider(PackOutput packOutput, ExistingFileHelper existingFileHelper) {
-		super(packOutput, ChowderExpress.MOD_ID, existingFileHelper);
+	public CartSoundProvider(PackOutput packOutput) {
+		super(packOutput, ChowderExpress.MOD_ID);
 	}
 
 	@Override

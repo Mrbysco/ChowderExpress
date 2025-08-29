@@ -41,7 +41,7 @@ public class SoupCartItem extends Item {
 			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
 			double d3;
 			if (blockstate.is(BlockTags.RAILS)) {
-				if (railshape.isAscending()) {
+				if (railshape.isSlope()) {
 					d3 = 0.6D;
 				} else {
 					d3 = 0.1D;
@@ -53,7 +53,7 @@ public class SoupCartItem extends Item {
 
 				BlockState blockstate1 = level.getBlockState(blockpos.below());
 				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) blockstate1.getBlock()).getRailDirection(blockstate1, level, blockpos.below(), null) : RailShape.NORTH_SOUTH;
-				if (direction != Direction.DOWN && railshape1.isAscending()) {
+				if (direction != Direction.DOWN && railshape1.isSlope()) {
 					d3 = -0.4D;
 				} else {
 					d3 = -0.9D;
@@ -99,7 +99,7 @@ public class SoupCartItem extends Item {
 			if (!level.isClientSide) {
 				RailShape shape = state.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock) state.getBlock()).getRailDirection(state, level, pos, null) : RailShape.NORTH_SOUTH;
 				double d0 = 0.0D;
-				if (shape.isAscending()) {
+				if (shape.isSlope()) {
 					d0 = 0.5D;
 				}
 

@@ -28,7 +28,7 @@ public class CartLanguageProvider extends LanguageProvider {
 	}
 
 	public void addSubtitle(SoundEvent sound, String name) {
-		String path = ChowderExpress.MOD_ID + ".subtitle." + sound.getLocation().getPath();
+		String path = ChowderExpress.MOD_ID + ".subtitle." + sound.location().getPath();
 		this.add(path, name);
 	}
 }

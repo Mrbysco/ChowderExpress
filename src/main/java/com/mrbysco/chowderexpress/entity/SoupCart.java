@@ -3,7 +3,6 @@ package com.mrbysco.chowderexpress.entity;
 import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartDataSerializers;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -11,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -22,10 +22,8 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -76,7 +74,7 @@ public class SoupCart extends AbstractMinecart {
 				if (setSoupAmount(1)) {
 					this.maybePlaySound(player);
 
-					setSoupData(new SoupData(stack.copy(), stack.getFoodProperties(player)));
+					setSoupData(new SoupData(stack.copy(), stack.get(DataComponents.FOOD)));
 					if (!mobEffects.isEmpty()) {
 						mobEffects.forEach(this::addEffect);
 					}
@@ -127,10 +125,8 @@ public class SoupCart extends AbstractMinecart {
 
 	private SuspiciousStewEffects getStewEffects(ItemStack stack) {
 		SuspiciousStewEffects mobEffects = new SuspiciousStewEffects(new ArrayList<>());
-		if (stack.getItem() instanceof SuspiciousStewItem) {
-			if (stack.has(DataComponents.SUSPICIOUS_STEW_EFFECTS)) {
-				mobEffects = new SuspiciousStewEffects(stack.get(DataComponents.SUSPICIOUS_STEW_EFFECTS).effects());
-			}
+		if (stack.has(DataComponents.SUSPICIOUS_STEW_EFFECTS)) {
+			mobEffects = new SuspiciousStewEffects(stack.get(DataComponents.SUSPICIOUS_STEW_EFFECTS).effects());
 		}
 		return mobEffects;
 	}
@@ -221,9 +217,9 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	@Override
-	protected void moveAlongTrack(BlockPos pos, BlockState state) {
-		super.moveAlongTrack(pos, state);
-		if (this.level().getGameTime() % 20 == 0) {
+	protected void moveAlongTrack(ServerLevel level) {
+		super.moveAlongTrack(level);
+		if (level.getGameTime() % 20 == 0) {
 			Entity entity = this.getFirstPassenger();
 			if (entity instanceof Player player && hasPassenger(player) && random.nextBoolean() && getSoupData().isPresent()) {
 				SoupData soupData = getSoupData().get();
@@ -232,11 +228,11 @@ public class SoupCart extends AbstractMinecart {
 						player.addEffect(entry.createEffectInstance());
 					}
 					this.setSoupAmount(getSoupAmount() - 0.5F);
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
 				} else if (player.getFoodData().needsFood() && getSoupAmount() > 0.25F) {
 					player.getFoodData().eat(Math.min(1, (int) (soupData.nutrition() / 2.0F)), soupData.saturationModifier() / 2.0F);
 					this.setSoupAmount(getSoupAmount() - 0.25F);
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
 				}
 			}
 		}
@@ -261,7 +257,7 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	@Override
-	public Type getMinecartType() {
-		return Type.RIDEABLE;
+	public boolean isRideable() {
+		return true;
 	}
 }

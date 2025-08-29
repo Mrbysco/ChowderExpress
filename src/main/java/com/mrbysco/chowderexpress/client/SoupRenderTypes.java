@@ -8,13 +8,9 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -48,35 +44,13 @@ public class SoupRenderTypes extends RenderType {
 		public SoupTextureStateShard(ResourceLocation resourceLocation, boolean blur, boolean mipmap) {
 			super(() -> {
 				TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-				texturemanager.getTexture(resourceLocation);
-				AbstractTexture texture = texturemanager.getTexture(resourceLocation, null);
-				if (texture == null) {
-					texture = loadTexture(texturemanager.getTexture(resourceLocation));
-				}
-				if (texture == MissingTextureAtlasSprite.getTexture()) {
-					//Default soup texture if no specific texture is found
-					AbstractTexture abstracttexture = new SimpleTexture(DEFAULT_SOUP);
-					abstracttexture.setFilter(blur, mipmap);
-					texturemanager.register(resourceLocation, abstracttexture);
-				}
+				texturemanager.getTexture(resourceLocation).setFilter(blur, mipmap);
 				RenderSystem.setShaderTexture(0, resourceLocation);
 			}, () -> {
 			});
 			this.texture = Optional.of(resourceLocation);
 			this.blur = blur;
 			this.mipmap = mipmap;
-		}
-
-		/**
-		 * Custom loadTexture method to stop the missing texture error from logging
-		 */
-		private static AbstractTexture loadTexture(AbstractTexture texture) {
-			try {
-				texture.load(Minecraft.getInstance().getResourceManager());
-				return texture;
-			} catch (IOException ioexception) {
-				return MissingTextureAtlasSprite.getTexture();
-			}
 		}
 
 		public String toString() {
