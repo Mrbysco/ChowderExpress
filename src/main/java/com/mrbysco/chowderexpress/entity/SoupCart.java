@@ -52,7 +52,7 @@ public class SoupCart extends AbstractMinecart {
 	public InteractionResult interact(Player player, InteractionHand hand) {
 		InteractionResult ret = super.interact(player, hand);
 		if (ret.consumesAction()) return ret;
-		if (!player.isSecondaryUseActive() && !this.isVehicle() && (this.level().isClientSide || player.startRiding(this))) {
+		if (!player.isSecondaryUseActive() && !this.isVehicle()) {
 			this.playerRotationOffset = this.rotationOffset;
 			if (!this.level().isClientSide) {
 				ItemStack stack = player.getItemInHand(hand);
