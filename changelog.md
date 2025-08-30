@@ -1,1 +1,1 @@
-* Initial update to 1.21.4
+* Fix applying soup to the cart
