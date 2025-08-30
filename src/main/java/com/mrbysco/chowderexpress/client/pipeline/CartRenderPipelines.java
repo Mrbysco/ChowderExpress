@@ -8,7 +8,7 @@ import com.mrbysco.chowderexpress.ChowderExpress;
 import net.minecraft.client.renderer.RenderPipelines;
 
 public class CartRenderPipelines {
-	public static final RenderPipeline.Snippet SOUP_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_FOG_LIGHT_DIR_SNIPPET)
+	public static final RenderPipeline.Snippet SOUP_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
 			.withVertexShader("core/entity")
 			.withFragmentShader("core/entity")
 			.withSampler("Sampler0")

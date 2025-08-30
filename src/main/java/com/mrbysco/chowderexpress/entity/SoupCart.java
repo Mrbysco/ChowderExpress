@@ -4,8 +4,6 @@ import com.mrbysco.chowderexpress.ChowderExpress;
 import com.mrbysco.chowderexpress.registry.CartDataSerializers;
 import com.mrbysco.chowderexpress.registry.CartRegistry;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -173,11 +173,10 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	@Override
-	protected void readAdditionalSaveData(CompoundTag tag) {
-		super.readAdditionalSaveData(tag);
+	protected void readAdditionalSaveData(ValueInput input) {
+		super.readAdditionalSaveData(input);
 		SoupData soupData = null;
-		Optional<SoupData> optionalData = tag.read("soupData", SoupData.CODEC,
-				this.registryAccess().createSerializationContext(NbtOps.INSTANCE));
+		Optional<SoupData> optionalData = input.read("soupData", SoupData.CODEC);
 		if (optionalData.isPresent()) {
 			soupData = optionalData.get();
 		}
@@ -186,27 +185,23 @@ public class SoupCart extends AbstractMinecart {
 		if (soupData == null) {
 			this.setSoupAmount(0);
 		} else {
-			this.setSoupAmount(tag.getFloatOr("SoupAmount", 0));
+			this.setSoupAmount(input.getFloatOr("SoupAmount", 0));
 		}
 
 		this.suspiciousStewEffects.effects().clear();
-		SuspiciousStewEffects.CODEC.parse(NbtOps.INSTANCE, tag.get("ActiveEffects"))
-				.resultOrPartial(ChowderExpress.LOGGER::error)
-				.ifPresent(suspiciousStewEffects -> this.suspiciousStewEffects.effects().addAll(suspiciousStewEffects.effects()));
+		Optional<SuspiciousStewEffects> effects = input.read("ActiveEffects", SuspiciousStewEffects.CODEC);
+		effects.ifPresent(stewEffects -> this.suspiciousStewEffects.effects().addAll(stewEffects.effects()));
 	}
 
 	@Override
-	protected void addAdditionalSaveData(CompoundTag tag) {
-		super.addAdditionalSaveData(tag);
+	protected void addAdditionalSaveData(ValueOutput output) {
+		super.addAdditionalSaveData(output);
 		if (this.getSoupData().isPresent()) {
-			tag.store("soupData", SoupData.CODEC,
-					this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.getSoupData().get());
+			output.store("soupData", SoupData.CODEC, this.getSoupData().get());
 		}
-		tag.putFloat("SoupAmount", this.getSoupAmount());
+		output.putFloat("SoupAmount", this.getSoupAmount());
 		if (!this.suspiciousStewEffects.effects().isEmpty()) {
-			SuspiciousStewEffects.CODEC.encodeStart(NbtOps.INSTANCE, this.suspiciousStewEffects)
-					.resultOrPartial(ChowderExpress.LOGGER::error)
-					.ifPresent(effects -> tag.put("ActiveEffects", effects));
+			output.store("ActiveEffects", SuspiciousStewEffects.CODEC, this.suspiciousStewEffects);
 		}
 	}
 

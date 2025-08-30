@@ -44,7 +44,7 @@ public abstract class SoupRenderTypes extends RenderType {
 				TextureHelper textureHelper = new TextureHelper(Minecraft.getInstance().getTextureManager());
 				AbstractTexture texture = textureHelper.getTexture(resourceLocation);
 				texture.setFilter(blur, mipmap);
-				RenderSystem.setShaderTexture(0, texture.getTexture());
+				RenderSystem.setShaderTexture(0, texture.getTextureView());
 			}, () -> {
 			});
 			this.texture = Optional.of(resourceLocation);
