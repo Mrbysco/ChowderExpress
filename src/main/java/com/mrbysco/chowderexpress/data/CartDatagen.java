@@ -1,7 +1,7 @@
 package com.mrbysco.chowderexpress.data;
 
-import com.mrbysco.chowderexpress.data.client.CartModelProvider;
 import com.mrbysco.chowderexpress.data.client.CartLanguageProvider;
+import com.mrbysco.chowderexpress.data.client.CartModelProvider;
 import com.mrbysco.chowderexpress.data.client.CartSoundProvider;
 import com.mrbysco.chowderexpress.data.server.CartBlockTagProvider;
 import com.mrbysco.chowderexpress.data.server.CartItemTagProvider;
