@@ -52,7 +52,7 @@ public class SoupCart extends AbstractMinecart {
 	public InteractionResult interact(Player player, InteractionHand hand) {
 		InteractionResult ret = super.interact(player, hand);
 		if (ret.consumesAction()) return ret;
-		if (!player.isSecondaryUseActive() && !this.isVehicle() && (this.level().isClientSide || player.startRiding(this))) {
+		if (!player.isSecondaryUseActive() && !this.isVehicle()) {
 			this.playerRotationOffset = this.rotationOffset;
 			if (!this.level().isClientSide) {
 				ItemStack stack = player.getItemInHand(hand);
@@ -176,15 +176,17 @@ public class SoupCart extends AbstractMinecart {
 	protected void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		SoupData soupData = null;
-		if (tag.contains("soupData", 10)) {
-			soupData = SoupData.readSoupData(tag.getCompound("soupData"), this.registryAccess());
+		Optional<SoupData> optionalData = tag.read("soupData", SoupData.CODEC,
+				this.registryAccess().createSerializationContext(NbtOps.INSTANCE));
+		if (optionalData.isPresent()) {
+			soupData = optionalData.get();
 		}
 		setSoupData(soupData);
 
 		if (soupData == null) {
 			this.setSoupAmount(0);
 		} else {
-			this.setSoupAmount(tag.getFloat("SoupAmount"));
+			this.setSoupAmount(tag.getFloatOr("SoupAmount", 0));
 		}
 
 		this.suspiciousStewEffects.effects().clear();
@@ -197,7 +199,8 @@ public class SoupCart extends AbstractMinecart {
 	protected void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (this.getSoupData().isPresent()) {
-			tag.put("soupData", SoupData.writeSoupData(this.getSoupData().get(), this.registryAccess()));
+			tag.store("soupData", SoupData.CODEC,
+					this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.getSoupData().get());
 		}
 		tag.putFloat("SoupAmount", this.getSoupAmount());
 		if (!this.suspiciousStewEffects.effects().isEmpty()) {
@@ -269,12 +272,12 @@ public class SoupCart extends AbstractMinecart {
 
 	@Override
 	public void tick() {
-		double d0 = (double)this.getYRot();
+		double d0 = (double) this.getYRot();
 		Vec3 vec3 = this.position();
 		super.tick();
-		double d1 = ((double)this.getYRot() - d0) % 360.0;
+		double d1 = ((double) this.getYRot() - d0) % 360.0;
 		if (this.level().isClientSide && vec3.distanceTo(this.position()) > 0.01) {
-			this.rotationOffset += (float)d1;
+			this.rotationOffset += (float) d1;
 			this.rotationOffset %= 360.0F;
 		}
 	}
@@ -283,7 +286,7 @@ public class SoupCart extends AbstractMinecart {
 	protected void positionRider(Entity p_361111_, Entity.MoveFunction p_365490_) {
 		super.positionRider(p_361111_, p_365490_);
 		if (this.level().isClientSide && p_361111_ instanceof Player player && player.shouldRotateWithMinecart() && useExperimentalMovement(this.level())) {
-			float f = (float) Mth.rotLerp(0.5, (double)this.playerRotationOffset, (double)this.rotationOffset);
+			float f = (float) Mth.rotLerp(0.5, (double) this.playerRotationOffset, (double) this.rotationOffset);
 			player.setYRot(player.getYRot() - (f - this.playerRotationOffset));
 			this.playerRotationOffset = f;
 		}

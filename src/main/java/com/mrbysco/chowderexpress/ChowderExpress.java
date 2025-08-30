@@ -31,6 +31,7 @@ public class ChowderExpress {
 		eventBus.addListener(this::buildCreativeContents);
 
 		if (dist.isClient()) {
+			eventBus.addListener(ClientHandler::registerPipelines);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
 		}

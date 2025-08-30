@@ -5,7 +5,7 @@ import com.mrbysco.chowderexpress.data.client.CartModelProvider;
 import com.mrbysco.chowderexpress.data.client.CartSoundProvider;
 import com.mrbysco.chowderexpress.data.server.CartBlockTagProvider;
 import com.mrbysco.chowderexpress.data.server.CartItemTagProvider;
-import com.mrbysco.chowderexpress.data.server.CartRecipes;
+import com.mrbysco.chowderexpress.data.server.CartRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -24,7 +24,7 @@ public class CartDatagen {
 		PackOutput packOutput = generator.getPackOutput();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-			generator.addProvider(true, new CartRecipes.Runner(packOutput, lookupProvider));
+			generator.addProvider(true, new CartRecipeProvider.Runner(packOutput, lookupProvider));
 			BlockTagsProvider blockTagsProvider;
 			generator.addProvider(true, blockTagsProvider = new CartBlockTagProvider(packOutput, lookupProvider));
 			generator.addProvider(true, new CartItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter()));

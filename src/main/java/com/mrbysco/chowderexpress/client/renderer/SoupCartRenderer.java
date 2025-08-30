@@ -199,7 +199,7 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 	@Override
 	protected AABB getBoundingBoxForCulling(SoupCart cart) {
 		AABB aabb = super.getBoundingBoxForCulling(cart);
-		return cart.hasCustomDisplay() ? aabb.inflate((double)Math.abs(cart.getDisplayOffset()) / 16.0) : aabb;
+		return !cart.getDisplayBlockState().isAir() ? aabb.expandTowards(0.0, cart.getDisplayOffset() * 0.75F / 16.0F, 0.0) : aabb;
 	}
 
 	@Override

@@ -10,8 +10,8 @@ import net.minecraft.world.item.Items;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CartRecipes extends RecipeProvider {
-	public CartRecipes(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
+public class CartRecipeProvider extends RecipeProvider {
+	public CartRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
 		super(provider, recipeOutput);
 	}
 
@@ -30,7 +30,7 @@ public class CartRecipes extends RecipeProvider {
 
 		@Override
 		protected RecipeProvider createRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
-			return new CartRecipes(provider, recipeOutput);
+			return new CartRecipeProvider(provider, recipeOutput);
 		}
 
 		@Override
