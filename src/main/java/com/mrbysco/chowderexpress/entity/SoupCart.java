@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class SoupCart extends AbstractMinecart {
 	private static final EntityDataAccessor<Float> SOUP_AMOUNT = SynchedEntityData.defineId(SoupCart.class, EntityDataSerializers.FLOAT);
 	private final SuspiciousStewEffects suspiciousStewEffects = new SuspiciousStewEffects(new ArrayList<>());
 
+	private float rotationOffset;
+	private float playerRotationOffset;
 
 	public SoupCart(EntityType<?> type, Level level) {
 		super(type, level);
@@ -44,22 +48,24 @@ public class SoupCart extends AbstractMinecart {
 		super(type, level, x, y, z);
 	}
 
+	@Override
 	public InteractionResult interact(Player player, InteractionHand hand) {
 		InteractionResult ret = super.interact(player, hand);
 		if (ret.consumesAction()) return ret;
-		if (player.isSecondaryUseActive()) {
-			return InteractionResult.PASS;
-		} else if (this.isVehicle()) {
-			return InteractionResult.PASS;
-		} else if (!this.level().isClientSide) {
-			ItemStack stack = player.getItemInHand(hand);
-			if (stack.is(ChowderExpress.SOUPS) || stack.is(Items.BOWL)) {
-				return doSoupInteraction(player, hand, stack);
+		if (!player.isSecondaryUseActive() && !this.isVehicle() && (this.level().isClientSide || player.startRiding(this))) {
+			this.playerRotationOffset = this.rotationOffset;
+			if (!this.level().isClientSide) {
+				ItemStack stack = player.getItemInHand(hand);
+				if (stack.is(ChowderExpress.SOUPS) || stack.is(Items.BOWL)) {
+					return doSoupInteraction(player, hand, stack);
+				} else {
+					return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+				}
 			} else {
-				return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+				return InteractionResult.SUCCESS;
 			}
 		} else {
-			return InteractionResult.SUCCESS;
+			return InteractionResult.PASS;
 		}
 	}
 
@@ -259,5 +265,27 @@ public class SoupCart extends AbstractMinecart {
 	@Override
 	public boolean isRideable() {
 		return true;
+	}
+
+	@Override
+	public void tick() {
+		double d0 = (double)this.getYRot();
+		Vec3 vec3 = this.position();
+		super.tick();
+		double d1 = ((double)this.getYRot() - d0) % 360.0;
+		if (this.level().isClientSide && vec3.distanceTo(this.position()) > 0.01) {
+			this.rotationOffset += (float)d1;
+			this.rotationOffset %= 360.0F;
+		}
+	}
+
+	@Override
+	protected void positionRider(Entity p_361111_, Entity.MoveFunction p_365490_) {
+		super.positionRider(p_361111_, p_365490_);
+		if (this.level().isClientSide && p_361111_ instanceof Player player && player.shouldRotateWithMinecart() && useExperimentalMovement(this.level())) {
+			float f = (float) Mth.rotLerp(0.5, (double)this.playerRotationOffset, (double)this.rotationOffset);
+			player.setYRot(player.getYRot() - (f - this.playerRotationOffset));
+			this.playerRotationOffset = f;
+		}
 	}
 }

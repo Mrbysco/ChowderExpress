@@ -33,6 +33,7 @@ public class CartRegistry {
 			MobCategory.MISC,
 			builder -> builder
 					.sized(0.98F, 0.7F)
+					.passengerAttachments(0.1875F)
 					.clientTrackingRange(8)
 	);
 }

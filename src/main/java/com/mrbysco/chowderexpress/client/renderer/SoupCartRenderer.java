@@ -19,9 +19,15 @@ import net.minecraft.client.renderer.entity.state.MinecartRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
+import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Objects;
 
 public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderState> {
 	private static final ResourceLocation MINECART_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/minecart.png");
@@ -45,8 +51,61 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 	@Override
 	public void extractRenderState(SoupCart cart, SoupCartRenderState renderState, float partialTick) {
 		super.extractRenderState(cart, renderState, partialTick);
+		if (cart.getBehavior() instanceof NewMinecartBehavior newMinecartBehavior) {
+			newExtractState(cart, newMinecartBehavior, renderState, partialTick);
+			renderState.isNewRender = true;
+		} else if (cart.getBehavior() instanceof OldMinecartBehavior oldMinecartBehavior) {
+			oldExtractState(cart, oldMinecartBehavior, renderState, partialTick);
+			renderState.isNewRender = false;
+		}
+
+		long i = (long) cart.getId() * 493286711L;
+		renderState.offsetSeed = i * i * 4392167121L + i * 98761L;
+		renderState.hurtTime = (float) cart.getHurtTime() - partialTick;
+		renderState.hurtDir = cart.getHurtDir();
+		renderState.damageTime = Math.max(cart.getDamage() - partialTick, 0.0F);
+		renderState.displayOffset = cart.getDisplayOffset();
+		renderState.displayBlockState = cart.getDisplayBlockState();
+
 		renderState.soupAmount = cart.getSoupAmount();
 		renderState.soupData = cart.getSoupData();
+	}
+
+	private static <T extends AbstractMinecart, S extends MinecartRenderState> void newExtractState(
+			T minecart, NewMinecartBehavior behavior, S renderState, float partialTick
+	) {
+		if (behavior.cartHasPosRotLerp()) {
+			renderState.renderPos = behavior.getCartLerpPosition(partialTick);
+			renderState.xRot = behavior.getCartLerpXRot(partialTick);
+			renderState.yRot = behavior.getCartLerpYRot(partialTick);
+		} else {
+			renderState.renderPos = null;
+			renderState.xRot = minecart.getXRot();
+			renderState.yRot = minecart.getYRot();
+		}
+	}
+
+	private static <T extends AbstractMinecart, S extends MinecartRenderState> void oldExtractState(
+			T minecart, OldMinecartBehavior behavior, S renderState, float partialTick
+	) {
+		float f = 0.3F;
+		renderState.xRot = minecart.getXRot(partialTick);
+		renderState.yRot = minecart.getYRot(partialTick);
+		double d0 = renderState.x;
+		double d1 = renderState.y;
+		double d2 = renderState.z;
+		Vec3 vec3 = behavior.getPos(d0, d1, d2);
+		if (vec3 != null) {
+			renderState.posOnRail = vec3;
+			Vec3 vec31 = behavior.getPosOffs(d0, d1, d2, 0.3F);
+			Vec3 vec32 = behavior.getPosOffs(d0, d1, d2, -0.3F);
+			renderState.frontPos = Objects.requireNonNullElse(vec31, vec3);
+			renderState.backPos = Objects.requireNonNullElse(vec32, vec3);
+		} else {
+			renderState.posOnRail = null;
+			renderState.frontPos = null;
+			renderState.backPos = null;
+		}
 	}
 
 	@Override
@@ -54,9 +113,9 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 		super.render(renderState, poseStack, bufferSource, packedLight);
 		poseStack.pushPose();
 		long i = renderState.offsetSeed;
-		float f = (((float)(i >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-		float f1 = (((float)(i >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
-		float f2 = (((float)(i >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+		float f = (((float) (i >> 16 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+		float f1 = (((float) (i >> 20 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
+		float f2 = (((float) (i >> 24 & 7L) + 0.5F) / 8.0F - 0.5F) * 0.004F;
 		poseStack.translate(f, f1, f2);
 		if (renderState.isNewRender) {
 			newRender(renderState, poseStack);
@@ -66,15 +125,14 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 
 		float f3 = renderState.hurtTime;
 		if (f3 > 0.0F) {
-			poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(f3) * f3 * renderState.damageTime / 10.0F * (float)renderState.hurtDir));
+			poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(f3) * f3 * renderState.damageTime / 10.0F * (float) renderState.hurtDir));
 		}
 
 		BlockState blockstate = renderState.displayBlockState;
 		if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
 			poseStack.pushPose();
-			float f4 = 0.75F;
 			poseStack.scale(0.75F, 0.75F, 0.75F);
-			poseStack.translate(-0.5F, (float)(renderState.displayOffset - 8) / 16.0F, 0.5F);
+			poseStack.translate(-0.5F, (float) (renderState.displayOffset - 8) / 16.0F, 0.5F);
 			poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
 			this.renderMinecartContents(renderState, blockstate, poseStack, bufferSource, packedLight);
 			poseStack.popPose();
@@ -109,8 +167,8 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 			Vec3 vec32 = vec31.add(-vec3.x, -vec3.y, -vec3.z);
 			if (vec32.length() != 0.0) {
 				vec32 = vec32.normalize();
-				f1 = (float)(Math.atan2(vec32.z, vec32.x) * 180.0 / Math.PI);
-				f = (float)(Math.atan(vec32.y) * 73.0);
+				f1 = (float) (Math.atan2(vec32.z, vec32.x) * 180.0 / Math.PI);
+				f = (float) (Math.atan(vec32.y) * 73.0);
 			}
 		}
 
@@ -136,5 +194,19 @@ public class SoupCartRenderer extends EntityRenderer<SoupCart, SoupCartRenderSta
 
 	protected void renderMinecartContents(SoupCartRenderState renderState, BlockState state, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
 		this.blockRenderer.renderSingleBlock(state, poseStack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY);
+	}
+
+	@Override
+	protected AABB getBoundingBoxForCulling(SoupCart cart) {
+		AABB aabb = super.getBoundingBoxForCulling(cart);
+		return cart.hasCustomDisplay() ? aabb.inflate((double)Math.abs(cart.getDisplayOffset()) / 16.0) : aabb;
+	}
+
+	@Override
+	public Vec3 getRenderOffset(SoupCartRenderState renderState) {
+		Vec3 vec3 = super.getRenderOffset(renderState);
+		return renderState.isNewRender && renderState.renderPos != null
+				? vec3.add(renderState.renderPos.x - renderState.x, renderState.renderPos.y - renderState.y, renderState.renderPos.z - renderState.z)
+				: vec3;
 	}
 }

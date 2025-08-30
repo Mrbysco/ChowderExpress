@@ -8,7 +8,6 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
@@ -43,8 +42,8 @@ public class SoupRenderTypes extends RenderType {
 
 		public SoupTextureStateShard(ResourceLocation resourceLocation, boolean blur, boolean mipmap) {
 			super(() -> {
-				TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-				texturemanager.getTexture(resourceLocation).setFilter(blur, mipmap);
+				TextureHelper textureHelper = new TextureHelper(Minecraft.getInstance().getTextureManager());
+				textureHelper.getTexture(resourceLocation).setFilter(blur, mipmap);
 				RenderSystem.setShaderTexture(0, resourceLocation);
 			}, () -> {
 			});
