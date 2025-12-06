@@ -1,0 +1,34 @@
+package com.mrbysco.chowderexpress.data.client;
+
+import com.mrbysco.chowderexpress.Constants;
+import com.mrbysco.chowderexpress.registration.CartRegistry;
+import net.minecraft.data.PackOutput;
+import net.minecraft.sounds.SoundEvent;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+
+import java.util.function.Supplier;
+
+public class CartLanguageProvider extends LanguageProvider {
+	public CartLanguageProvider(PackOutput packOutput) {
+		super(packOutput, Constants.MOD_ID, "en_us");
+	}
+
+	@Override
+	protected void addTranslations() {
+		addEntityType(CartRegistry.SOUP_CART, "Soup Cart");
+		addItem(CartRegistry.SOUP_CART_ITEM, "Soup Cart");
+
+		addSubtitle(CartRegistry.MM_SOUP, "Mm soup");
+		addSubtitle(CartRegistry.EMPTY_BOWL, "Emptying bowl");
+		addSubtitle(CartRegistry.FILL_BOWL, "Filling bowl");
+	}
+
+	public void addSubtitle(Supplier<SoundEvent> sound, String name) {
+		this.addSubtitle(sound.get(), name);
+	}
+
+	public void addSubtitle(SoundEvent sound, String name) {
+		String path = Constants.MOD_ID + ".subtitle." + sound.getLocation().getPath();
+		this.add(path, name);
+	}
+}

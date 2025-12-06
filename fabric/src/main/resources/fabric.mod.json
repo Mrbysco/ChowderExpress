@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "chowderexpress",
+  "version": "${version}",
+  "name": "Chowder Express",
+  "description": "Chowder Express is a mod that allows players to fill minecarts with soup and ride them around the world, restoring hunger and gaining temporary effects as they go.",
+  "authors": [
+    "Mrbysco"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/chowder-express",
+    "sources": "https://github.com/Mrbysco/ChowderExpress",
+    "issues": "https://github.com/Mrbysco/ChowderExpress/issues"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mrbysco.chowderexpress.ChowderExpress"
+    ],
+    "client": [
+      "com.mrbysco.chowderexpress.ChowderExpressClient"
+    ],
+    "fabric-datagen": [
+      "com.mrbysco.chowderexpress.datagen.CartDatagen"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "accessWidener": "chowderexpress.accesswidener"
+}
+

@@ -1,0 +1,153 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id "net.neoforged.moddev" version "2.0.121"
+    id 'net.darkhax.curseforgegradle'
+    id 'com.modrinth.minotaur'
+}
+
+base {
+    archivesName = "${mod_name}-neoforge-${minecraft_version}"
+}
+
+neoForge {
+    version = "${neo_version}"
+
+    parchment {
+        minecraftVersion = "${parchment_minecraft_version}"
+        mappingsVersion = "${parchment_mapping_version}"
+    }
+
+    // Automatically enable forge AccessTransformers if the file exists
+    // This location is hardcoded in Forge and can not be changed.
+    // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+    // Forge still uses SRG names during compile time, so we cannot use the common AT's
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+    def commonResources = project(':common').file("src/main/resources")
+
+    runs {
+        configureEach { model ->
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'fml.earlyprogresswindow', 'false'
+
+            //Limit ram usage for the dev environment to 4GB
+            jvmArguments.add('-Xmx4G')
+
+            if (model.project.javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse("").contains("JetBrains")) {
+                jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+            }
+        }
+
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+            programArguments.addAll(
+                    '--mod', "${mod_id}",
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    '--existing', commonResources.getAbsolutePath()
+            )
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.test
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+    compileOnly project(":common")
+}
+
+compileJava {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+sourcesJar {
+    from project(":common").sourceSets.main.allJava
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId base.archivesName.get()
+            version project.version
+            from components.java
+        }
+    }
+    repositories {
+        if (System.getenv().SAP_SECRET) {
+            maven {
+                url "https://maven.saps.dev/releases"
+                credentials {
+                    username = "mrbysco"
+                    password = "${System.getenv().SAP_SECRET}"
+                }
+            }
+        }
+    }
+}
+
+if (System.getenv().CURSEFORGE_KEY) {
+    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = System.getenv().CURSEFORGE_KEY
+
+        def mainFile = upload(project.curseforge_id, jar)
+        mainFile.releaseType = 'release'
+        mainFile.addModLoader "NeoForge"
+        mainFile.addGameVersion "${minecraft_version}"
+        mainFile.addJavaVersion "Java 21"
+        mainFile.addEnvironment('Client', 'Server')
+
+        mainFile.changelog = file("$project.rootDir/changelog.md")
+        mainFile.changelogType = 'markdown'
+
+//        mainFile.addRequirement()
+//        mainFile.addOptional()
+    }
+}
+
+if (System.getenv().MODRINTH_KEY) {
+    modrinth {
+        token = System.getenv().MODRINTH_KEY
+        projectId = project.modrinth_id
+        versionType = "release"
+        versionName = "${mod_name} ${minecraft_version}"
+        versionNumber = project.version
+        uploadFile = jar
+        changelog = file("$project.rootDir/changelog.md").text
+        gameVersions = ["${minecraft_version}"]
+        loaders = ["neoforge"]
+
+        dependencies {
+
+        }
+    }
+}
