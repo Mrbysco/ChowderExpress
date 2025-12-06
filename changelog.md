@@ -1,1 +1,1 @@
-* Add the `c:foods/soup` tag to the `chowderexpress:soups` tag to add support for more soups
+* First multiloader build (NeoForge and Fabric)
