@@ -231,15 +231,26 @@ public class SoupCart extends Minecart {
 			Entity entity = this.getFirstPassenger();
 			if (entity instanceof Player player && hasPassenger(player) && random.nextBoolean() && getSoupData().isPresent()) {
 				SoupData soupData = getSoupData().get();
-				if (!suspiciousStewEffects.effects().isEmpty() && getSoupAmount() > 0.5F) {
+				if (!suspiciousStewEffects.effects().isEmpty() && getSoupAmount() >= 0.5F) {
 					for (SuspiciousStewEffects.Entry entry : suspiciousStewEffects.effects()) {
-						player.addEffect(entry.createEffectInstance());
+						player.addEffect(entry.createEffectInstance(), this);
 					}
-					this.setSoupAmount(getSoupAmount() - 0.5F);
+					float newAmount = getSoupAmount() - 0.5F;
+					if (newAmount <= 0) {
+						this.suspiciousStewEffects.effects().clear();
+						this.setSoupData(null);
+					} else {
+						this.setSoupAmount(newAmount);
+					}
 					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
-				} else if (player.getFoodData().needsFood() && getSoupAmount() > 0.25F) {
+				} else if (player.getFoodData().needsFood() && getSoupAmount() >= 0.25F) {
 					player.getFoodData().eat(Math.min(1, (int) (soupData.nutrition() / 2.0F)), soupData.saturationModifier() / 2.0F);
-					this.setSoupAmount(getSoupAmount() - 0.25F);
+					float newAmount = getSoupAmount() - 0.25F;
+					if (newAmount <= 0) {
+						this.setSoupData(null);
+					} else {
+						this.setSoupAmount(newAmount);
+					}
 					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
 				}
 			}
