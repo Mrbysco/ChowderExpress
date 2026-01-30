@@ -4,9 +4,9 @@ import com.mrbysco.chowderexpress.entity.SoupData;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.item.CreativeModeTabs;
 
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class ChowderExpress implements ModInitializer {
 	public void onInitialize() {
 		CommonClass.init();
 
-		EntityDataSerializers.registerSerializer(SOUP_DATA);
+		FabricTrackedDataRegistry.register(Constants.modLoc("soup_data"), SOUP_DATA);
 
 		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
 			entries.accept(CartRegistry.SOUP_CART_ITEM.get());

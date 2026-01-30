@@ -1,11 +1,18 @@
 package com.mrbysco.chowderexpress.client;
 
 import com.mrbysco.chowderexpress.client.model.SoupModel;
+import com.mrbysco.chowderexpress.client.pipeline.CartRenderPipelines;
 import com.mrbysco.chowderexpress.client.renderer.SoupCartRenderer;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
 public class ClientHandler {
+
+	public static void registerPipelines(RegisterRenderPipelinesEvent event) {
+		event.registerPipeline(CartRenderPipelines.SOUP);
+	}
+
 	public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerEntityRenderer(CartRegistry.SOUP_CART.get(), SoupCartRenderer::new);
 	}

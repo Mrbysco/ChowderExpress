@@ -4,7 +4,6 @@ import com.mrbysco.chowderexpress.client.ClientHandler;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
 import com.mrbysco.chowderexpress.registry.CartDataSerializers;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -21,6 +20,7 @@ public class ChowderExpress {
 		eventBus.addListener(this::buildCreativeContents);
 
 		if (dist.isClient()) {
+			eventBus.addListener(ClientHandler::registerPipelines);
 			eventBus.addListener(ClientHandler::registerEntityRenders);
 			eventBus.addListener(ClientHandler::registerLayerDefinitions);
 		}

@@ -12,6 +12,9 @@ base {
     archivesName = "${mod_name}-neoforge-${minecraft_version}"
 }
 
+configurations {
+    testmodImplementation.extendsFrom implementation
+}
 neoForge {
     version = "${neo_version}"
 
@@ -19,11 +22,7 @@ neoForge {
         minecraftVersion = "${parchment_minecraft_version}"
         mappingsVersion = "${parchment_mapping_version}"
     }
-
-    // Automatically enable forge AccessTransformers if the file exists
-    // This location is hardcoded in Forge and can not be changed.
-    // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
-    // Forge still uses SRG names during compile time, so we cannot use the common AT's
+    // Automatically enable neoforge AccessTransformers if the file exists
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
@@ -50,8 +49,10 @@ neoForge {
             server()
             programArgument '--nogui'
         }
+
         data {
-            data()
+            clientData()
+
             programArguments.addAll(
                     '--mod', "${mod_id}",
                     '--all',
@@ -120,34 +121,28 @@ if (System.getenv().CURSEFORGE_KEY) {
         apiToken = System.getenv().CURSEFORGE_KEY
 
         def mainFile = upload(project.curseforge_id, jar)
-        mainFile.releaseType = 'release'
+        mainFile.releaseType = 'beta'
         mainFile.addModLoader "NeoForge"
         mainFile.addGameVersion "${minecraft_version}"
-        mainFile.addJavaVersion "Java 21"
-        mainFile.addEnvironment('Client', 'Server')
+        mainFile.addJavaVersion  "Java 21"
+        mainFile.addEnvironment('Server', 'Client')
 
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
-
-//        mainFile.addRequirement()
-//        mainFile.addOptional()
     }
 }
 
 if (System.getenv().MODRINTH_KEY) {
+    String fileContents = file("$project.rootDir/changelog.md").text
     modrinth {
         token = System.getenv().MODRINTH_KEY
         projectId = project.modrinth_id
-        versionType = "release"
+        versionType = "beta"
         versionName = "${mod_name} ${minecraft_version}"
         versionNumber = project.version
         uploadFile = jar
-        changelog = file("$project.rootDir/changelog.md").text
+        changelog = fileContents
         gameVersions = ["${minecraft_version}"]
         loaders = ["neoforge"]
-
-        dependencies {
-
-        }
     }
 }

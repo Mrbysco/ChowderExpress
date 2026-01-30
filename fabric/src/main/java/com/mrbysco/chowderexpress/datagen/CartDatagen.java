@@ -13,7 +13,7 @@ public class CartDatagen implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-		pack.addProvider(CartRecipeProvider::new);
+		pack.addProvider(CartRecipeProvider.Runner::new);
 		pack.addProvider(CartItemTagProvider::new);
 
 		pack.addProvider(CartLanguageProvider::new);

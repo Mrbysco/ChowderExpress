@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,22 +40,22 @@ public class CartSoundProvider implements DataProvider {
 		this.add(CartRegistry.EMPTY_BOWL, definition()
 				.subtitle(modSubtitle(CartRegistry.EMPTY_BOWL.getId()))
 				.with(
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/empty1")),
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/empty1")).pitch(0.9),
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/empty2")),
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/empty3"))
+						sound(Identifier.withDefaultNamespace("item/bucket/empty1")),
+						sound(Identifier.withDefaultNamespace("item/bucket/empty1")).pitch(0.9),
+						sound(Identifier.withDefaultNamespace("item/bucket/empty2")),
+						sound(Identifier.withDefaultNamespace("item/bucket/empty3"))
 				));
 		this.add(CartRegistry.FILL_BOWL, definition()
 				.subtitle(modSubtitle(CartRegistry.FILL_BOWL.getId()))
 				.with(
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/fill1")),
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/fill2")),
-						sound(ResourceLocation.withDefaultNamespace("item/bucket/fill3"))
+						sound(Identifier.withDefaultNamespace("item/bucket/fill1")),
+						sound(Identifier.withDefaultNamespace("item/bucket/fill2")),
+						sound(Identifier.withDefaultNamespace("item/bucket/fill3"))
 				));
 	}
 
 
-	public String modSubtitle(ResourceLocation id) {
+	public String modSubtitle(Identifier id) {
 		return Constants.MOD_ID + ".subtitle." + id.getPath();
 	}
 
@@ -91,7 +91,7 @@ public class CartSoundProvider implements DataProvider {
 	 * @param name The name of the sound to create.
 	 * @param type The type of sound to create.
 	 */
-	protected static SoundDefinition.Sound sound(final ResourceLocation name, final SoundDefinition.SoundType type) {
+	protected static SoundDefinition.Sound sound(final Identifier name, final SoundDefinition.SoundType type) {
 		return SoundDefinition.Sound.sound(name, type);
 	}
 
@@ -101,7 +101,7 @@ public class CartSoundProvider implements DataProvider {
 	 *
 	 * @param name The name of the sound to create.
 	 */
-	protected static SoundDefinition.Sound sound(final ResourceLocation name) {
+	protected static SoundDefinition.Sound sound(final Identifier name) {
 		return sound(name, SoundDefinition.SoundType.SOUND);
 	}
 
@@ -133,17 +133,17 @@ public class CartSoundProvider implements DataProvider {
 	 * @param definition The {@link SoundDefinition} that defines the given event.
 	 */
 	protected void add(final SoundEvent soundEvent, final SoundDefinition definition) {
-		this.add(soundEvent.getLocation(), definition);
+		this.add(soundEvent.location(), definition);
 	}
 
 	/**
-	 * Adds the {@link SoundEvent} referenced by the given {@link ResourceLocation} with the
+	 * Adds the {@link SoundEvent} referenced by the given {@link Identifier} with the
 	 * {@link SoundDefinition} to the list.
 	 *
-	 * @param soundEvent The {@link ResourceLocation} that identifies the event.
+	 * @param soundEvent The {@link Identifier} that identifies the event.
 	 * @param definition The {@link SoundDefinition} that defines the given event.
 	 */
-	protected void add(final ResourceLocation soundEvent, final SoundDefinition definition) {
+	protected void add(final Identifier soundEvent, final SoundDefinition definition) {
 		this.addSounds(soundEvent.getPath(), definition);
 	}
 
@@ -160,7 +160,7 @@ public class CartSoundProvider implements DataProvider {
 	 * @param definition The {@link SoundDefinition} that defines the given event.
 	 */
 	protected void add(final String soundEvent, final SoundDefinition definition) {
-		this.add(ResourceLocation.tryParse(soundEvent), definition);
+		this.add(Identifier.tryParse(soundEvent), definition);
 	}
 
 	private void addSounds(final String soundEvent, final SoundDefinition definition) {

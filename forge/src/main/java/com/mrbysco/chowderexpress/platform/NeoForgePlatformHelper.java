@@ -4,6 +4,7 @@ import com.mrbysco.chowderexpress.entity.SoupData;
 import com.mrbysco.chowderexpress.platform.services.IPlatformHelper;
 import com.mrbysco.chowderexpress.registry.CartDataSerializers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -29,6 +30,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
 	@Override
 	public FoodProperties getFoodProperties(ItemStack stack, Player player) {
-		return stack.getFoodProperties(player);
+		return stack.get(DataComponents.FOOD);
 	}
 }

@@ -3,20 +3,16 @@ package com.mrbysco.chowderexpress.data.server;
 import com.mrbysco.chowderexpress.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 
 import java.util.concurrent.CompletableFuture;
 
 public class CartItemTagProvider extends ItemTagsProvider {
 
-	public CartItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> providerCompletableFuture,
-	                           CompletableFuture<TagLookup<Block>> completableFuture, @Nullable ExistingFileHelper fileHelper) {
-		super(packOutput, providerCompletableFuture, completableFuture, Constants.MOD_ID, fileHelper);
+	public CartItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(packOutput, lookupProvider, Constants.MOD_ID);
 	}
 
 	@Override
@@ -24,13 +20,13 @@ public class CartItemTagProvider extends ItemTagsProvider {
 		this.tag(Constants.SOUPS).addTag(Tags.Items.FOODS_SOUP);
 
 		//Farmers Delight
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "beef_stew"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "chicken_soup"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "vegetable_soup"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "pumpkin_soup"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "noodle_soup"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "fish_stew"));
-		this.tag(Constants.SOUPS).addOptional(ResourceLocation.fromNamespaceAndPath("farmersdelight", "baked_cod_stew"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "beef_stew"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "chicken_soup"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "vegetable_soup"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "pumpkin_soup"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "noodle_soup"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "fish_stew"));
+		this.getOrCreateRawBuilder(Constants.SOUPS).addOptionalElement(Identifier.fromNamespaceAndPath("farmersdelight", "baked_cod_stew"));
 
 	}
 }

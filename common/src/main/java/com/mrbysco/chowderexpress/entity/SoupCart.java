@@ -3,47 +3,49 @@ package com.mrbysco.chowderexpress.entity;
 import com.mrbysco.chowderexpress.Constants;
 import com.mrbysco.chowderexpress.platform.Services;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SoupCart extends Minecart {
+public class SoupCart extends AbstractMinecart {
 	private static final EntityDataAccessor<Optional<SoupData>> SOUP_DATA = SynchedEntityData.defineId(SoupCart.class, Services.PLATFORM.getSoupSerializer());
 	private static final EntityDataAccessor<Float> SOUP_AMOUNT = SynchedEntityData.defineId(SoupCart.class, EntityDataSerializers.FLOAT);
 	private final SuspiciousStewEffects suspiciousStewEffects = new SuspiciousStewEffects(new ArrayList<>());
 
+	private float rotationOffset;
+	private float playerRotationOffset;
 
 	public SoupCart(EntityType<?> type, Level level) {
 		super(type, level);
 	}
 
-	public SoupCart(Level level, double x, double y, double z) {
-		super(level, x, y, z);
+	public SoupCart(EntityType<?> type, Level level, double x, double y, double z) {
+		super(type, level, x, y, z);
 	}
 
 	@Override
@@ -57,7 +59,8 @@ public class SoupCart extends Minecart {
 			return InteractionResult.PASS;
 		} else if (this.isVehicle()) {
 			return InteractionResult.PASS;
-		} else if (!this.level().isClientSide) {
+		} else if (!this.level().isClientSide()) {
+			this.playerRotationOffset = this.rotationOffset;
 			ItemStack stack = player.getItemInHand(hand);
 			if (stack.is(Constants.SOUPS) || stack.is(Items.BOWL)) {
 				return doSoupInteraction(player, hand, stack);
@@ -131,10 +134,8 @@ public class SoupCart extends Minecart {
 
 	private SuspiciousStewEffects getStewEffects(ItemStack stack) {
 		SuspiciousStewEffects mobEffects = new SuspiciousStewEffects(new ArrayList<>());
-		if (stack.getItem() instanceof SuspiciousStewItem) {
-			if (stack.has(DataComponents.SUSPICIOUS_STEW_EFFECTS)) {
-				mobEffects = new SuspiciousStewEffects(stack.get(DataComponents.SUSPICIOUS_STEW_EFFECTS).effects());
-			}
+		if (stack.has(DataComponents.SUSPICIOUS_STEW_EFFECTS)) {
+			mobEffects = new SuspiciousStewEffects(stack.get(DataComponents.SUSPICIOUS_STEW_EFFECTS).effects());
 		}
 		return mobEffects;
 	}
@@ -175,42 +176,41 @@ public class SoupCart extends Minecart {
 	}
 
 	@Override
-	protected void readAdditionalSaveData(CompoundTag tag) {
-		super.readAdditionalSaveData(tag);
+	protected void readAdditionalSaveData(ValueInput input) {
+		super.readAdditionalSaveData(input);
 		SoupData soupData = null;
-		if (tag.contains("soupData", 10)) {
-			soupData = SoupData.readSoupData(tag.getCompound("soupData"), this.registryAccess());
+		Optional<SoupData> optionalData = input.read("soupData", SoupData.CODEC);
+		if (optionalData.isPresent()) {
+			soupData = optionalData.get();
 		}
 		setSoupData(soupData);
 
 		if (soupData == null) {
 			this.setSoupAmount(0);
 		} else {
-			this.setSoupAmount(tag.getFloat("SoupAmount"));
+			this.setSoupAmount(input.getFloatOr("SoupAmount", 0));
 		}
 
 		this.suspiciousStewEffects.effects().clear();
-		SuspiciousStewEffects.CODEC.parse(NbtOps.INSTANCE, tag.get("ActiveEffects"))
-				.resultOrPartial(Constants.LOGGER::error)
-				.ifPresent(suspiciousStewEffects -> this.suspiciousStewEffects.effects().addAll(suspiciousStewEffects.effects()));
+		Optional<SuspiciousStewEffects> effects = input.read("ActiveEffects", SuspiciousStewEffects.CODEC);
+		effects.ifPresent(stewEffects -> this.suspiciousStewEffects.effects().addAll(stewEffects.effects()));
 	}
 
 	@Override
-	protected void addAdditionalSaveData(CompoundTag tag) {
-		super.addAdditionalSaveData(tag);
+	protected void addAdditionalSaveData(ValueOutput output) {
+		super.addAdditionalSaveData(output);
 		if (this.getSoupData().isPresent()) {
-			tag.put("soupData", SoupData.writeSoupData(this.getSoupData().get(), this.registryAccess()));
+			output.store("soupData", SoupData.CODEC, this.getSoupData().get());
 		}
-		tag.putFloat("SoupAmount", this.getSoupAmount());
+		output.putFloat("SoupAmount", this.getSoupAmount());
 		if (!this.suspiciousStewEffects.effects().isEmpty()) {
-			SuspiciousStewEffects.CODEC.encodeStart(NbtOps.INSTANCE, this.suspiciousStewEffects)
-					.resultOrPartial(Constants.LOGGER::error)
-					.ifPresent(effects -> tag.put("ActiveEffects", effects));
+			output.store("ActiveEffects", SuspiciousStewEffects.CODEC, this.suspiciousStewEffects);
 		}
 	}
 
-	public void activateMinecart(int x, int y, int z, boolean receivingPower) {
-		if (receivingPower) {
+	@Override
+	public void activateMinecart(ServerLevel level, int x, int y, int z, boolean isPowered) {
+		if (isPowered) {
 			if (this.isVehicle()) {
 				this.ejectPassengers();
 			}
@@ -225,8 +225,8 @@ public class SoupCart extends Minecart {
 	}
 
 	@Override
-	protected void moveAlongTrack(BlockPos pos, BlockState state) {
-		super.moveAlongTrack(pos, state);
+	protected void moveAlongTrack(ServerLevel level) {
+		super.moveAlongTrack(level);
 		if (this.level().getGameTime() % 20 == 0) {
 			Entity entity = this.getFirstPassenger();
 			if (entity instanceof Player player && hasPassenger(player) && random.nextBoolean() && getSoupData().isPresent()) {
@@ -242,7 +242,7 @@ public class SoupCart extends Minecart {
 					} else {
 						this.setSoupAmount(newAmount);
 					}
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
 				} else if (player.getFoodData().needsFood() && getSoupAmount() >= 0.25F) {
 					player.getFoodData().eat(Math.min(1, (int) (soupData.nutrition() / 2.0F)), soupData.saturationModifier() / 2.0F);
 					float newAmount = getSoupAmount() - 0.25F;
@@ -251,7 +251,7 @@ public class SoupCart extends Minecart {
 					} else {
 						this.setSoupAmount(newAmount);
 					}
-					this.playSound(SoundEvents.GENERIC_DRINK, 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
 				}
 			}
 		}
@@ -276,7 +276,29 @@ public class SoupCart extends Minecart {
 	}
 
 	@Override
-	public Type getMinecartType() {
-		return Type.RIDEABLE;
+	public boolean isRideable() {
+		return true;
+	}
+
+	@Override
+	public void tick() {
+		double d0 = this.getYRot();
+		Vec3 vec3 = this.position();
+		super.tick();
+		double d1 = (this.getYRot() - d0) % 360.0;
+		if (this.level().isClientSide() && vec3.distanceTo(this.position()) > 0.01) {
+			this.rotationOffset += (float)d1;
+			this.rotationOffset %= 360.0F;
+		}
+	}
+
+	@Override
+	protected void positionRider(Entity p_478277_, Entity.MoveFunction p_482199_) {
+		super.positionRider(p_478277_, p_482199_);
+		if (this.level().isClientSide() && p_478277_ instanceof Player player && player.shouldRotateWithMinecart() && useExperimentalMovement(this.level())) {
+			float f = (float) Mth.rotLerp(0.5, (double)this.playerRotationOffset, (double)this.rotationOffset);
+			player.setYRot(player.getYRot() - (f - this.playerRotationOffset));
+			this.playerRotationOffset = f;
+		}
 	}
 }

@@ -2,6 +2,7 @@ package com.mrbysco.chowderexpress.item;
 
 import com.mrbysco.chowderexpress.entity.SoupCart;
 import com.mrbysco.chowderexpress.platform.Services;
+import com.mrbysco.chowderexpress.registration.CartRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -41,7 +42,7 @@ public class SoupCartItem extends Item {
 			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? Services.PLATFORM.getRailDirection(blockstate, level, blockpos) : RailShape.NORTH_SOUTH;
 			double d3;
 			if (blockstate.is(BlockTags.RAILS)) {
-				if (railshape.isAscending()) {
+				if (railshape.isSlope()) {
 					d3 = 0.6D;
 				} else {
 					d3 = 0.1D;
@@ -53,14 +54,14 @@ public class SoupCartItem extends Item {
 
 				BlockState blockstate1 = level.getBlockState(blockpos.below());
 				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock ? Services.PLATFORM.getRailDirection(blockstate1, level, blockpos.below()) : RailShape.NORTH_SOUTH;
-				if (direction != Direction.DOWN && railshape1.isAscending()) {
+				if (direction != Direction.DOWN && railshape1.isSlope()) {
 					d3 = -0.4D;
 				} else {
 					d3 = -0.9D;
 				}
 			}
 
-			SoupCart soupCart = new SoupCart(level, d0, d1 + d3, d2);
+			SoupCart soupCart = new SoupCart(CartRegistry.SOUP_CART.get(), level, d0, d1 + d3, d2);
 			if (stack.has(DataComponents.CUSTOM_NAME)) {
 				soupCart.setCustomName(stack.getHoverName());
 			}
@@ -96,14 +97,14 @@ public class SoupCartItem extends Item {
 			return InteractionResult.FAIL;
 		} else {
 			ItemStack itemstack = context.getItemInHand();
-			if (!level.isClientSide) {
+			if (!level.isClientSide()) {
 				RailShape shape = state.getBlock() instanceof BaseRailBlock ? Services.PLATFORM.getRailDirection(state, level, pos) : RailShape.NORTH_SOUTH;
 				double d0 = 0.0D;
-				if (shape.isAscending()) {
+				if (shape.isSlope()) {
 					d0 = 0.5D;
 				}
 
-				SoupCart soupCart = new SoupCart(level,
+				SoupCart soupCart = new SoupCart(CartRegistry.SOUP_CART.get(), level,
 						(double) pos.getX() + 0.5D, (double) pos.getY() + 0.0625D + d0, (double) pos.getZ() + 0.5D);
 				if (itemstack.has(DataComponents.CUSTOM_NAME)) {
 					soupCart.setCustomName(itemstack.getHoverName());
