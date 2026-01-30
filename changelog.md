@@ -1,1 +1,1 @@
-* First multiloader build (NeoForge and Fabric)
+* Fix soup getting stuck in the cart
