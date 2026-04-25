@@ -1,17 +1,17 @@
 package com.mrbysco.chowderexpress.datagen.data;
 
 import com.mrbysco.chowderexpress.Constants;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CartItemTagProvider extends FabricTagProvider.ItemTagProvider {
+public class CartItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
 
-	public CartItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+	public CartItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
 		super(output, registriesFuture);
 	}
 

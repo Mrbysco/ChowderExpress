@@ -1,7 +1,7 @@
 package com.mrbysco.chowderexpress.datagen.data;
 
 import com.mrbysco.chowderexpress.registration.CartRegistry;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -25,7 +25,7 @@ public class CartRecipeProvider extends RecipeProvider {
 	}
 
 	public static class Runner extends FabricRecipeProvider {
-		public Runner(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		public Runner(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
 			super(output, registriesFuture);
 		}
 

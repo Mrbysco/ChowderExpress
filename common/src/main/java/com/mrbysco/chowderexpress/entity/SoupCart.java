@@ -54,7 +54,7 @@ public class SoupCart extends AbstractMinecart {
 	}
 
 	@Override
-	public InteractionResult interact(Player player, InteractionHand hand) {
+	public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
 		if (player.isSecondaryUseActive()) {
 			return InteractionResult.PASS;
 		} else if (this.isVehicle()) {
@@ -110,7 +110,7 @@ public class SoupCart extends AbstractMinecart {
 			}
 		}
 		if (stack.is(Items.BOWL) && getSoupData().isPresent() && getSoupAmount() >= 1.0) {
-			ItemStack soupStack = getSoupData().get().stack().copy();
+			ItemStack soupStack = getSoupData().get().stack().create();
 			if (setSoupAmount(getSoupAmount() - 1.0F)) {
 				stack.shrink(1);
 				if (soupStack.is(Items.SUSPICIOUS_STEW)) {
@@ -127,7 +127,7 @@ public class SoupCart extends AbstractMinecart {
 
 	public void maybePlaySound(Player player) {
 		if (random.nextDouble() <= 0.05) {
-			player.displayClientMessage(Component.literal("Mm soup"), true);
+			player.sendOverlayMessage(Component.literal("Mm soup"));
 			this.level().playSound(null, blockPosition(), CartRegistry.MM_SOUP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 		}
 	}
@@ -242,7 +242,7 @@ public class SoupCart extends AbstractMinecart {
 					} else {
 						this.setSoupAmount(newAmount);
 					}
-					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
 				} else if (player.getFoodData().needsFood() && getSoupAmount() >= 0.25F) {
 					player.getFoodData().eat(Math.min(1, (int) (soupData.nutrition() / 2.0F)), soupData.saturationModifier() / 2.0F);
 					float newAmount = getSoupAmount() - 0.25F;
@@ -251,7 +251,7 @@ public class SoupCart extends AbstractMinecart {
 					} else {
 						this.setSoupAmount(newAmount);
 					}
-					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().random.nextFloat() * 0.1F + 0.9F);
+					this.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5F, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
 				}
 			}
 		}

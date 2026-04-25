@@ -3,7 +3,7 @@ package com.mrbysco.chowderexpress.datagen.assets;
 import com.google.gson.JsonObject;
 import com.mrbysco.chowderexpress.Constants;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -23,9 +23,9 @@ public class CartSoundProvider implements DataProvider {
 
 	private final Map<String, SoundDefinition> sounds = new LinkedHashMap<>();
 
-	protected final FabricDataOutput dataOutput;
+	protected final FabricPackOutput dataOutput;
 
-	public CartSoundProvider(FabricDataOutput dataOutput) {
+	public CartSoundProvider(FabricPackOutput dataOutput) {
 		this.dataOutput = dataOutput;
 	}
 

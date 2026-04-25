@@ -8,13 +8,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public record SoupData(ItemStack stack, int nutrition, float saturationModifier) {
+public record SoupData(ItemStackTemplate stack, int nutrition, float saturationModifier) {
 	public static final Codec<SoupData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-					ItemStack.SINGLE_ITEM_CODEC.fieldOf("stack").forGetter(SoupData::stack),
+					ItemStackTemplate.CODEC.fieldOf("stack").forGetter(SoupData::stack),
 					Codec.INT.fieldOf("nutrition").forGetter(SoupData::nutrition),
 					Codec.FLOAT.fieldOf("saturationModifier").forGetter(SoupData::saturationModifier))
 			.apply(instance, SoupData::new));
@@ -23,11 +24,13 @@ public record SoupData(ItemStack stack, int nutrition, float saturationModifier)
 	);
 
 	public SoupData(ItemStack stack, @Nullable FoodProperties foodProperties) {
-		this(stack, foodProperties != null ? foodProperties.nutrition() : 0, foodProperties != null ? foodProperties.saturation() : 0.0F);
+		this(ItemStackTemplate.fromNonEmptyStack(stack),
+				foodProperties != null ? foodProperties.nutrition() : 0,
+				foodProperties != null ? foodProperties.saturation() : 0.0F);
 	}
 
 	public Identifier identifier() {
-		return BuiltInRegistries.ITEM.getKey(stack.getItem());
+		return BuiltInRegistries.ITEM.getKey(stack.item().value());
 	}
 
 	@Override
@@ -55,14 +58,14 @@ public record SoupData(ItemStack stack, int nutrition, float saturationModifier)
 
 	public static class Serializer {
 		private static SoupData fromNetwork(RegistryFriendlyByteBuf byteBuf) {
-			ItemStack itemstack = ItemStack.STREAM_CODEC.decode(byteBuf);
+			ItemStackTemplate itemstack = ItemStackTemplate.STREAM_CODEC.decode(byteBuf);
 			int nutrition = byteBuf.readVarInt();
 			float saturationModifier = byteBuf.readFloat();
 			return new SoupData(itemstack, nutrition, saturationModifier);
 		}
 
 		private static void toNetwork(RegistryFriendlyByteBuf byteBuf, SoupData stack) {
-			ItemStack.STREAM_CODEC.encode(byteBuf, stack.stack);
+			ItemStackTemplate.STREAM_CODEC.encode(byteBuf, stack.stack);
 			byteBuf.writeVarInt(stack.nutrition());
 			byteBuf.writeFloat(stack.saturationModifier());
 		}

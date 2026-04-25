@@ -7,7 +7,7 @@ import com.mrbysco.chowderexpress.client.pipeline.CartRenderPipelines;
 import com.mrbysco.chowderexpress.client.renderer.SoupCartRenderer;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
@@ -16,7 +16,7 @@ public class ChowderExpressClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		EntityModelLayerRegistry.registerModelLayer(SoupModellayer.SOUP, SoupModel::createBodyLayer);
+		ModelLayerRegistry.registerModelLayer(SoupModellayer.SOUP, SoupModel::createBodyLayer);
 		EntityRenderers.register(CartRegistry.SOUP_CART.get(), SoupCartRenderer::new);
 	}
 }

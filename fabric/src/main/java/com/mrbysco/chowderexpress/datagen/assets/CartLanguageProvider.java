@@ -2,7 +2,7 @@ package com.mrbysco.chowderexpress.datagen.assets;
 
 import com.mrbysco.chowderexpress.Constants;
 import com.mrbysco.chowderexpress.registration.CartRegistry;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.sounds.SoundEvent;
@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class CartLanguageProvider extends FabricLanguageProvider {
-	public CartLanguageProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+	public CartLanguageProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
 		super(output, registryLookup);
 	}
 
