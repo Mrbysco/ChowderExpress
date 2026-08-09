@@ -3,9 +3,6 @@ package com.mrbysco.chowderexpress.platform.services;
 import com.mrbysco.chowderexpress.entity.SoupData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
@@ -31,12 +28,4 @@ public interface IPlatformHelper {
 	 */
 	EntityDataSerializer<Optional<SoupData>> getSoupSerializer();
 
-	/**
-	 * Get the food properties of a soup item stack for a player.
-	 *
-	 * @param stack  The item stack
-	 * @param player The player consuming the soup
-	 * @return The food properties
-	 */
-	FoodProperties getFoodProperties(ItemStack stack, Player player);
 }

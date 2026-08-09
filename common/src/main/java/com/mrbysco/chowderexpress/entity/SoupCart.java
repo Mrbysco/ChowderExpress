@@ -83,7 +83,7 @@ public class SoupCart extends AbstractMinecart {
 				if (setSoupAmount(1)) {
 					this.maybePlaySound(player);
 
-					setSoupData(new SoupData(stack.copy(), Services.PLATFORM.getFoodProperties(stack, player)));
+					setSoupData(new SoupData(stack.copy(), stack.get(DataComponents.FOOD)));
 					if (!mobEffects.isEmpty()) {
 						mobEffects.forEach(this::addEffect);
 					}
